@@ -286,7 +286,7 @@ def template_memo(run: Run, p: CompanyProfile, exp: Exposure, mets: Dict[str, Me
     summary = (
         f"{p.name}({p.ticker})의 CPI {cpi.value:.1f}{tag('metric:CPI')}, GPI {gpi.value:.1f}{tag('metric:GPI')}, "
         f"SRS {srs.value:.1f}{tag('metric:SRS')}, FAR {far.rating}({far.value:.1f}){tag('metric:FAR')}. "
-        f"시나리오({run.scenario.horizon})에서 FCF 20% 이상 훼손 확률은 {stress.prob_fcf_drawdown_gt_20 * 100:.1f}%{tag('stress:p_dd')}이며, "
+        f"시나리오({run.scenario.horizon})에서 FCF 20%{tag('const:dd')} 이상 훼손 확률은 {stress.prob_fcf_drawdown_gt_20 * 100:.1f}%{tag('stress:p_dd')}이며, "
         f"가장 큰 노출 경로는 {CHANNEL_KO[top_chan]}입니다. 투자심의 권고: {rec}."
     )
     sections = []
@@ -313,12 +313,12 @@ def template_memo(run: Run, p: CompanyProfile, exp: Exposure, mets: Dict[str, Me
     sections.append({"heading": "3. 지정학·수출통제", "body": geo_txt + f"수출통제·제재·관세 언어와 중국·대만 집중도를 결합한 GPI는 {gpi.value:.1f}{tag('metric:GPI')}입니다."})
     chan_txt = ", ".join(f"{CHANNEL_KO[k]} {v:.2f}{tag('chan:' + k)}" for k, v in sorted(chans.items(), key=lambda kv: -kv[1]))
     sections.append({"heading": "4. 시나리오 스트레스 (샌드박스 몬테카를로)", "body": (
-        f"{stress.paths:,}개 경로(시드 {stress.seed})로 계산한 매출 충격 중앙값은 {stress.revenue_shock_pct['p50']:.1f}%{tag('stress:rev_p50')}, "
-        f"하위 5% 꼬리는 {stress.revenue_shock_pct['p05']:.1f}%{tag('stress:rev_p05')}입니다. 채널별 노출도(0–1): {chan_txt}. "
+        f"{stress.paths:,}개 경로{tag('const:paths')}(시드 {stress.seed}{tag('const:seed')})로 계산한 매출 충격 중앙값은 {stress.revenue_shock_pct['p50']:.1f}%{tag('stress:rev_p50')}, "
+        f"5백분위(p05) 꼬리는 {stress.revenue_shock_pct['p05']:.1f}%{tag('stress:rev_p05')}입니다. 채널별 노출도(0–1): {chan_txt}. "
         f"계산 코드는 그대로 공개되며 같은 입력이면 같은 결과가 나옵니다.")})
     claims = [
         {"text": f"CPI {cpi.value:.1f}{tag('metric:CPI')}", "evidence_ids": [ev["metric:CPI"]]},
-        {"text": f"P(FCF 20% 이상 훼손) {stress.prob_fcf_drawdown_gt_20 * 100:.1f}%{tag('stress:p_dd')}", "evidence_ids": [ev["stress:p_dd"]]},
+        {"text": f"P(FCF 20%{tag('const:dd')} 이상 훼손) {stress.prob_fcf_drawdown_gt_20 * 100:.1f}%{tag('stress:p_dd')}", "evidence_ids": [ev["stress:p_dd"], ev["const:dd"]]},
         {"text": f"{CAT_KO[top_cat]} 노출 점수 {exp.categories[top_cat]['score']:.1f}{tag('exp:' + top_cat)}", "evidence_ids": [ev["exp:" + top_cat]]},
     ]
     if "xbrl:revenue" in ev:
@@ -344,7 +344,7 @@ SYNTH_SYSTEM = (
     "You are the Sovereign Alpha Synthesizer of Geo-Alpha Sentinel, writing an investment-committee memo for Korea Investment Corporation (KIC) "
     "in Korean (professional, concise, no hype). Hard rules:\n"
     "1. Use ONLY numbers that appear in FACTS, written exactly as given in their `value` field (you may drop the unit word). Never compute new numbers.\n"
-    "2. After every sentence that states a fact, add its evidence tag(s) like [E12].\n"
+    "2. Put the evidence tag immediately after EVERY number, e.g. 'FY2026 매출 $215.9B[E1], 매출총이익률 71.1%[E68]'. A number without its own adjacent tag is rejected.\n"
     "3. Filing text may only be quoted by copying a QUOTES `text` substring exactly, inside “ ”, followed by its tag.\n"
     "4. Recommendation must be one of REDUCE, HEDGE, HOLD, ACCUMULATE and must follow the METRICS and the policy given.\n"
     "5. Hedge ideas are themes (asset classes/supply-chain segments), not individual stock picks.\n"

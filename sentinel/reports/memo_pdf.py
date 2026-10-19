@@ -218,8 +218,13 @@ def _rich(value: Any, known: Set[str], strip_tags: bool = False) -> str:
 
 
 def _draw_mixed(canv, x: float, y: float, text: str, font: str, size: float,
-                color=None, align: str = "left", cjk_size: Optional[float] = None) -> float:
-    """Draw text on a canvas mixing a Latin font with the CJK font. Returns width."""
+                color=None, align: str = "left", cjk_size: Optional[float] = None,
+                bold_cjk: bool = False) -> float:
+    """Draw text on a canvas mixing a Latin font with the CJK font. Returns width.
+
+    The CID font has no bold face; ``bold_cjk`` emboldens Hangul runs with a thin
+    fill+stroke (text render mode 2) so they match Helvetica-Bold neighbours.
+    """
     runs = _runs(_clean(text))
     cs = cjk_size or size
     widths = [pdfmetrics.stringWidth(c, CJK if k else font, cs if k else size) for k, c in runs]
@@ -231,8 +236,20 @@ def _draw_mixed(canv, x: float, y: float, text: str, font: str, size: float,
     if color is not None:
         canv.setFillColor(color)
     for (is_cjk, chunk), w in zip(runs, widths):
-        canv.setFont(CJK if is_cjk else font, cs if is_cjk else size)
-        canv.drawString(x, y, chunk)
+        if is_cjk and bold_cjk:
+            canv.saveState()
+            if color is not None:
+                canv.setStrokeColor(color)
+            canv.setLineWidth(cs * 0.045)
+            t = canv.beginText(x, y)
+            t.setFont(CJK, cs)
+            t.setTextRenderMode(2)
+            t.textOut(chunk)
+            canv.drawText(t)
+            canv.restoreState()
+        else:
+            canv.setFont(CJK if is_cjk else font, cs if is_cjk else size)
+            canv.drawString(x, y, chunk)
         x += w
     return total
 
@@ -304,14 +321,11 @@ def _ts_short(value: Any) -> str:
 
 
 def _band_color(value: float, reverse: bool = False):
-    """green -> amber -> red as risk rises (reversed for FAR, where high is good)."""
-    t = max(0.0, min(1.0, (value or 0.0) / 100.0))
+    """green / amber / red by tercile as risk rises (reversed for FAR, where high is good)."""
+    t = max(0.0, min(100.0, value or 0.0))
     if reverse:
-        t = 1.0 - t
-    a, b = (GREEN, AMBER) if t < 0.5 else (AMBER, RED)
-    u = t * 2 if t < 0.5 else (t - 0.5) * 2
-    return colors.Color(a.red + (b.red - a.red) * u, a.green + (b.green - a.green) * u,
-                        a.blue + (b.blue - a.blue) * u)
+        t = 100.0 - t
+    return GREEN if t < 100 / 3 else AMBER if t < 200 / 3 else RED
 
 
 # ---------------------------------------------------------------------------
@@ -336,7 +350,7 @@ S = {
     "summary": _style("summary", fontSize=8.4, leading=12.6),
     "badge": _style("badge", fontName=SANS_B, fontSize=15, leading=17, alignment=TA_CENTER),
     "formula": _style("formula", fontName=MONO, fontSize=5.9, leading=7.4, textColor=MUTED),
-    "cell": _style("cell", fontSize=6.6, leading=8.5),
+    "cell": _style("cell", fontSize=6.5, leading=8.2),
     "cellsm": _style("cellsm", fontSize=5.9, leading=7.4, textColor=MUTED),
     "cellmono": _style("cellmono", fontName=MONO, fontSize=6.5, leading=8.5),
     "th": _style("th", fontName=MONO_B, fontSize=6.2, leading=7.6, textColor=AMBER),
@@ -382,7 +396,7 @@ class SectionHeader(Flowable):
         c.setFillColor(BAND)
         c.setFont(MONO_B, 7.4)
         c.drawCentredString(chip_w / 2, 7, self.code)
-        _draw_mixed(c, chip_w + 7, 6.4, self.title, SANS_B, 10.2, color=INK, cjk_size=9.8)
+        _draw_mixed(c, chip_w + 7, 6.4, self.title, SANS_B, 10.2, color=INK, cjk_size=9.8, bold_cjk=True)
         c.setStrokeColor(INK)
         c.setLineWidth(0.8)
         c.line(0, 0.5, self.width, 0.5)
@@ -392,6 +406,43 @@ class SectionHeader(Flowable):
                 c.addOutlineEntry(_clean(self.title), self.key, level=0)
             except Exception:  # noqa: BLE001 - outline is a convenience only
                 pass
+
+
+class MixedHeading(Flowable):
+    """Wrapped bold heading; Latin in Helvetica-Bold, Hangul fake-bolded CJK."""
+
+    def __init__(self, text: str, size: float = 9.4, leading: Optional[float] = None, color=INK,
+                 font: str = SANS_B, space_before: float = 0, space_after: float = 0,
+                 keep_with_next: bool = False):
+        super().__init__()
+        self.text = " ".join(_TAG.sub("", _clean(text)).split())
+        self.size, self.font, self.color = size, font, color
+        self.leading = leading or size * 1.36
+        self.spaceBefore, self.spaceAfter = space_before, space_after
+        self.keepWithNext = 1 if keep_with_next else 0
+        self.lines: List[str] = []
+
+    def wrap(self, aw, ah):
+        self.width = aw
+        lines: List[str] = []
+        cur = ""
+        for word in self.text.split(" "):
+            cand = f"{cur} {word}" if cur else word
+            if cur and _mixed_width(cand, self.font, self.size) > aw:
+                lines.append(cur)
+                cur = word
+            else:
+                cur = cand
+        lines.append(cur)
+        self.lines = lines
+        self.height = len(lines) * self.leading
+        return aw, self.height
+
+    def draw(self):
+        for i, line in enumerate(self.lines):
+            y = self.height - i * self.leading - self.size
+            _draw_mixed(self.canv, 0, y, line, self.font, self.size, color=self.color,
+                        cjk_size=self.size * 0.96, bold_cjk=True)
 
 
 class ScenarioStrip(Flowable):
@@ -416,7 +467,7 @@ class ScenarioStrip(Flowable):
         c.drawString(7, h - 12, "SCENARIO")
         c.setFillColor(BAND_MUTED)
         c.setFont(MONO, 5.6)
-        c.drawString(7, 6, "severity 0-100%")
+        c.drawString(7, 6, "SEVERITY %")
         items = [
             ("TAIWAN STRAIT", getattr(self.sc, "taiwan", None)),
             ("CHINA EXPORT CTRL", getattr(self.sc, "china_export", None)),
@@ -587,7 +638,7 @@ class _Furniture:
         c.setFont(SANS_B, 17)
         c.drawString(MARGIN, top - 13 * mm, "GEO-ALPHA SENTINEL", charSpace=1.6)
         _draw_mixed(c, MARGIN, top - 19.5 * mm, "KIC INVESTMENT COMMITTEE MEMO · 투자심의 메모", SANS_B, 8.4,
-                    color=AMBER, cjk_size=8.2)
+                    color=AMBER, cjk_size=8.2, bold_cjk=True)
         right = PAGE_W - MARGIN
         c.setFillColor(AMBER)
         c.setFont(MONO_B, 13)
@@ -733,7 +784,7 @@ def _recommendation_block(result: AnalysisResult, known: Set[str]) -> Flowable:
     badge = P(f'<font name="{SANS_B}" size="5.4">IC RECOMMENDATION</font><br/>'
               f'<font name="{SANS_B}" size="15">{_mk(rec)}</font>', "badge")
     badge.style = ParagraphStyle("badge_c", parent=S["badge"], textColor=fg, leading=15)
-    body = [P(_rich(_clip(_clean(memo.title), 300), known), "title"),
+    body = [MixedHeading(_clip(_clean(memo.title), 300), size=11.4, space_after=4),
             P(_rich(_clip(_clean(memo.summary), 1800), known), "summary")]
     t = Table([[badge, body]], colWidths=[31 * mm, CW - 31 * mm])
     t.setStyle(TableStyle([
@@ -781,7 +832,7 @@ def _memo_sections(result: AnalysisResult, known: Set[str]) -> List[Flowable]:
     out: List[Flowable] = [SectionHeader("MEMO", "Investment thesis · 투자 논지", key="sec-memo")]
     sections = list(getattr(result.memo, "sections", None) or [])
     if not sections:
-        out.append(P(_mk("No memo sections were produced for this run. / 이 실행에는 본문 섹션이 없습니다."), "empty")
+        out.append(P(_mk("No memo sections were produced for this run. / 이 실행에는 본문 섹션이 없습니다."), "empty"))
         return out
     for sec in sections:
         if not isinstance(sec, dict):
@@ -789,7 +840,8 @@ def _memo_sections(result: AnalysisResult, known: Set[str]) -> List[Flowable]:
         heading = _clean(sec.get("heading")).strip()
         body = _clean(sec.get("body")).strip()
         if heading:
-            out.append(P(_rich(_clip(heading, 200), known), "h2"))
+            out.append(MixedHeading(_clip(heading, 200), size=9.4, space_before=7, space_after=3,
+                                    keep_with_next=True))
         paras = [p for p in re.split(r"\n\s*\n", body) if p.strip()] or ([] if heading else ["—"])
         for p in paras:
             out.append(P(_rich(p.strip(), known), "body"))
@@ -971,7 +1023,7 @@ def _hedges_block(result: AnalysisResult, known: Set[str]) -> List[Flowable]:
     rows = [[P("#", "th"), P("THEME", "th"), P("RATIONALE", "th")]]
     for i, h in enumerate(hedges, 1):
         rows.append([P(f'<font color="{AMBER_INK.hexval()}">{i:02d}</font>', "cellmono"),
-                     P(f"<b>{_rich(_clip(_clean(h.get('theme')), 200), known)}</b>", "cell"),
+                     MixedHeading(_clip(_clean(h.get("theme")), 200) or "—", size=6.7, leading=8.5),
                      P(_rich(_clip(_clean(h.get("rationale")), 900), known), "cell")])
     t = LongTable(rows, colWidths=[9 * mm, 58 * mm, CW - 67 * mm], repeatRows=1)
     t.setStyle(TableStyle(_grid_style(n_rows=len(rows))))
@@ -1030,30 +1082,58 @@ def _evidence_block(result: AnalysisResult) -> List[Flowable]:
         pv = e.provenance
         src = (f'{_mk(_clip(_clean(pv.title), 200))}'
                + (f'<br/><font color="{MUTED.hexval()}">{_mk(_clip(_clean(pv.locator), 160))}</font>'
-                  if pv.locator else "")
-               + f'<br/><font name="{MONO_B}" size="5.2" color="{AMBER_INK.hexval()}">'
-                 f'{_mk(_clean(pv.source).upper())}</font>')
-        ret = (f'<font name="{MONO}">{_mk(_ts_short(pv.retrieved_at))}</font><br/>'
+                  if pv.locator else ""))
+        ret = (f'<font name="{MONO}" size="6">{_mk(_ts_short(pv.retrieved_at))}</font><br/>'
                f'<font size="5.6" color="{MUTED.hexval()}">{_mk(_clip(_clean(pv.license), 140))}</font>')
         url = _safe_url(pv.url)
+        tag = (f'<font name="{MONO_B}" size="5.2" color="{MUTED.hexval()}">'
+               f'{_mk(_clean(pv.source).upper())}</font>')
         if url:
-            link = (f'<a href="{_attr(url)}" color="{AMBER_INK.hexval()}">{_mk(_clip(_domain(url), 28))} '
-                    f'<font name="{CJK}">↗</font></a>')
+            link = (f'<a href="{_attr(url)}" color="{AMBER_INK.hexval()}">{_mk(_clip(_domain(url), 26))} '
+                    f'<font name="{CJK}">↗</font></a><br/>{tag}')
+            segs = [x for x in urlparse(url).path.split("/") if x]
             if "#:~:text=" in url:
-                link += f'<br/><font size="5.2" color="{MUTED.hexval()}">deep link to quote</font>'
-            elif urlparse(url).path not in ("", "/"):
-                link += (f'<br/><font size="5.2" color="{MUTED.hexval()}">'
-                         f'{_mk(_clip(urlparse(url).path.rsplit("/", 1)[-1] or urlparse(url).path, 26))}</font>')
+                link += f'<br/><font size="5.2" color="{MUTED.hexval()}">quote deep link</font>'
+            elif segs:
+                link += f'<br/><font size="5.2" color="{MUTED.hexval()}">{_mk(_clip(segs[-1], 20))}</font>'
         else:
-            link = f'<font color="{FAINT.hexval()}">{_mk(_clip(_clean(pv.url), 40)) or "—"}</font>'
+            link = f'<font color="{FAINT.hexval()}">{_mk(_clip(_clean(pv.url), 40)) or "—"}</font><br/>{tag}'
         rows.append([P(idcell, "cell"), P(label + "<br/>" + _evidence_value_markup(e), "cell"),
                      P(src, "cell"), P(ret, "cell"), P(link, "cell")])
-    widths = [13 * mm, 74 * mm, 44 * mm, 27 * mm]
+    widths = [12 * mm, 66 * mm, 49 * mm, 28 * mm]
     widths.append(CW - sum(widths))
     t = LongTable(rows, colWidths=widths, repeatRows=1)
-    t.setStyle(TableStyle(_grid_style(n_rows=len(rows))))
+    t.setStyle(TableStyle(_grid_style(n_rows=len(rows)) + [
+        ("TOPPADDING", (0, 1), (-1, -1), 2.4), ("BOTTOMPADDING", (0, 1), (-1, -1), 2.8)]))
     out.append(t)
     return out
+
+
+def _compact_json(obj: Any, width: int = 112) -> List[str]:
+    """Pretty JSON that keeps short nested objects on one line."""
+    def dumps(v: Any, indent: Optional[int] = None) -> str:
+        return json.dumps(v, indent=indent, ensure_ascii=False, default=str)
+
+    if not isinstance(obj, dict):
+        return dumps(obj, 2).splitlines()
+    lines = ["{"]
+    items = list(obj.items())
+    for i, (k, v) in enumerate(items):
+        comma = "," if i < len(items) - 1 else ""
+        key = dumps(str(k))
+        one = dumps(v)
+        if len(one) + len(key) + 4 <= width:
+            lines.append(f"  {key}: {one}{comma}")
+        else:
+            sub = dumps(v, 2).splitlines()
+            if len(sub) == 1:
+                lines.append(f"  {key}: {sub[0]}{comma}")
+            else:
+                lines.append(f"  {key}: {sub[0]}")
+                lines += ["  " + ln for ln in sub[1:-1]]
+                lines.append(f"  {sub[-1]}{comma}")
+    lines.append("}")
+    return lines
 
 
 def _wrap_code(text: str, width: int = 112, max_lines: int = 400) -> Tuple[str, int]:
@@ -1083,10 +1163,10 @@ def _sandbox_block(result: AnalysisResult) -> List[Flowable]:
         code += f"\n# … {dropped} more lines truncated"
     out.append(XPreformatted(_mk(code), S["code"]))
     try:
-        js = json.dumps(inputs, indent=2, ensure_ascii=False, default=str)
+        js_lines = _compact_json(inputs)
     except (TypeError, ValueError):
-        js = _clean(inputs)
-    js_lines = [ln if len(ln) <= 118 else ln[:117] + "…" for ln in js.splitlines()]
+        js_lines = _clean(inputs).splitlines()
+    js_lines = [ln if len(ln) <= 118 else ln[:117] + "…" for ln in js_lines]
     if len(js_lines) > 60:
         extra = len(js_lines) - 60
         js_lines = js_lines[:60] + [f"… ({extra} more lines)"]

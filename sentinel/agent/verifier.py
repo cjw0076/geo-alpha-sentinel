@@ -30,35 +30,66 @@ DATE = re.compile(r"\b\d{4}-\d{2}-\d{2}\b|\b\d{1,2}(?:-|/)\d{1,2}(?:-|/)\d{2,4}\
 FORMS = re.compile(r"\b(10-K|10-Q|20-F|40-F|8-K|Item\s+\d+[A-Z]?(?:\.\d+)?|HS\s?\d{4,6}|FY\d{2,4}|Q[1-4])\b", re.I)
 
 
-def _numbers(text: str) -> List[Tuple[str, float]]:
+NUM_UNIT = re.compile(
+    r"(?<![A-Za-z0-9.])([-−]?)\$?(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)\s*(B|bn|billion|M|mn|million|K|%|조|억)?(?![A-Za-z0-9])"
+)
+UNIT_SCALE = {"B": 1e9, "bn": 1e9, "billion": 1e9, "M": 1e6, "mn": 1e6, "million": 1e6, "K": 1e3, "조": 1e12, "억": 1e8}
+TAG_GROUP = re.compile(r"(?:\[E\d+\])+")
+
+
+def _numbers(text: str) -> List[Tuple[str, float, Optional[str]]]:
+    """(raw, value, unit) for every number outside dates/form names/tags."""
     stripped = FORMS.sub(" ", DATE.sub(" ", TAG.sub(" ", text)))
     out = []
-    for m in NUM.finditer(stripped):
-        raw = m.group(0)
+    for m in NUM_UNIT.finditer(stripped):
         try:
-            v = float(raw.replace("$", "").replace(",", "").replace("−", "-"))
+            v = float(m.group(2).replace(",", ""))
         except ValueError:
             continue
-        out.append((raw, v))
+        if m.group(1):
+            v = -v
+        out.append((m.group(0).strip(), v, m.group(3)))
     return out
 
 
-def _matches(v: float, ledger_vals: List[float]) -> bool:
-    av = abs(v)
-    decimals_tol = 0.051 if av < 1000 else 0.6
-    for lv in ledger_vals:
-        for s in SCALES:
-            x = abs(lv * s)
-            if x == 0:
-                continue
-            if abs(x - av) <= decimals_tol or abs(x - av) / x <= 0.006:
-                return True
+def _trivial(raw: str, v: float, unit: Optional[str]) -> bool:
+    if unit in (None, "%") and float(v).is_integer() and 1990 <= v <= 2035 and unit is None:
+        return True  # year
+    if unit is None and float(v).is_integer() and 0 <= v <= 10 and "." not in raw:
+        return True  # small ordinal / count
     return False
 
 
+def _value_matches(v: float, unit: Optional[str], ev_value: float, ev_unit: Optional[str]) -> bool:
+    if unit in UNIT_SCALE:
+        target = v * UNIT_SCALE[unit]
+        tol = max(0.0051 * abs(ev_value), 0.051 * UNIT_SCALE[unit])
+        return abs(abs(ev_value) - abs(target)) <= tol
+    candidates = [ev_value]
+    if unit == "%" or ev_unit in ("0-1",):
+        candidates.append(ev_value * 100.0)
+    if ev_unit == "USD":
+        candidates += [ev_value / 1e9, ev_value / 1e6]
+    for c in candidates:
+        if abs(abs(c) - abs(v)) <= 0.051 or (c and abs(abs(c) - abs(v)) / abs(c) <= 0.006):
+            return True
+    return False
+
+
+def _segments(text: str) -> List[Tuple[str, List[str]]]:
+    """Split text into (segment, tags that close it). Trailing text inherits the previous tags."""
+    segs, pos, last_tags = [], 0, []
+    for m in TAG_GROUP.finditer(text):
+        tags = TAG.findall(m.group(0))
+        segs.append((text[pos : m.start()], tags))
+        pos, last_tags = m.end(), tags
+    if pos < len(text):
+        segs.append((text[pos:], last_tags))
+    return segs
+
+
 def check_text(text: str, ledger: Ledger, allowed_ints: Optional[set] = None) -> Tuple[bool, Optional[str]]:
-    tags = TAG.findall(text)
-    for t in tags:
+    for t in TAG.findall(text):
         if ledger.get(t) is None:
             return False, f"unknown evidence tag [{t}]"
     quotes = [_norm(q.text or "") for q in ledger.quotes()]
@@ -66,18 +97,17 @@ def check_text(text: str, ledger: Ledger, allowed_ints: Optional[set] = None) ->
         nq = _norm(q).strip(" .…")
         if not any(nq in lq for lq in quotes):
             return False, f"quote not verbatim in cited filings: “{q[:60]}…”"
-    # Numbers inside verified verbatim quotes come from the filing itself.
-    text = QUOTE.sub(" ", text)
-    vals = [e.value for e in ledger.numbers() if e.value is not None]
-    for raw, v in _numbers(text):
-        if float(v).is_integer() and 1990 <= v <= 2035:
-            continue  # years
-        if allowed_ints and float(v).is_integer() and int(v) in allowed_ints:
-            continue
-        if float(v).is_integer() and 0 <= v <= 10 and "." not in raw:
-            continue  # small ordinals/counts ("3 scenarios", "top 5")
-        if not _matches(v, vals):
-            return False, f"number {raw} not found in evidence ledger"
+    text = QUOTE.sub(" ", text)  # numbers inside verified verbatim quotes come from the filing itself
+    for seg, tags in _segments(text):
+        evs = [ledger.get(t) for t in tags]
+        evs = [e for e in evs if e is not None and e.value is not None]
+        for raw, v, unit in _numbers(seg):
+            if _trivial(raw, v, unit) or (allowed_ints and float(v).is_integer() and int(v) in allowed_ints):
+                continue
+            if not evs:
+                return False, f"number {raw} has no evidence tag next to it"
+            if not any(_value_matches(v, unit, e.value, e.unit) for e in evs):
+                return False, f"number {raw} does not match its cited evidence {', '.join('[' + e.id + ']=' + format(e.value, 'g') for e in evs)}"
     return True, None
 
 
