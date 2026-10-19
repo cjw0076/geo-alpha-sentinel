@@ -6,10 +6,9 @@ function link(down) { for (const fn of statusListeners) fn(down); }
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 const mockNames = {
   health: 'health.json', search: 'search_nv.json', chokepoints: 'chokepoints.json',
-  minerals: 'minerals.json', macro: 'macro.json', sanctions: 'sanctions_huawei.json',
-  analyze: 'analyze_NVDA.events.json'
+  minerals: 'minerals.json', macro: 'macro.json', sanctions: 'sanctions_huawei.json'
 };
-function mockFile(kind, ticker) { return mockNames[kind] || `${kind}_${ticker || 'NVDA'}.json`; }
+function mockFile(kind, ticker) { return kind === 'analyze' ? `analyze_${ticker || 'NVDA'}.events.json` : mockNames[kind] || `${kind}_${ticker || 'NVDA'}.json`; }
 export async function getJSON(kind, path, ticker, {signal} = {}) {
   if (mock) {
     const file = mockFile(kind, ticker);

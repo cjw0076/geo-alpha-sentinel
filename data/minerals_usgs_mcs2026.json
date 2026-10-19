@@ -1,6 +1,6 @@
 {
   "edition": "MCS 2026",
-  "generated_at": "2026-10-19T02:42:06Z",
+  "generated_at": "2026-10-19T02:55:42Z",
   "items": [
     {
       "id": "rare-earths",
@@ -80,7 +80,7 @@
       "top_country": "China",
       "top_share_pct": 69.23,
       "china_share_pct": 69.23,
-      "us_net_import_reliance_pct": 0.0,
+      "us_net_import_reliance_pct": 67.0,
       "provenance": {
         "source": "usgs_mcs",
         "title": "USGS Mineral Commodity Summaries 2026 — Rare Earths",
@@ -244,7 +244,7 @@
       "top_country": "Australia",
       "top_share_pct": 35.38,
       "china_share_pct": 15.77,
-      "us_net_import_reliance_pct": null,
+      "us_net_import_reliance_pct": 50.0,
       "provenance": {
         "source": "usgs_mcs",
         "title": "USGS Mineral Commodity Summaries 2026 — Lithium",
@@ -317,7 +317,7 @@
       "top_country": "Congo (Kinshasa)",
       "top_share_pct": 74.07,
       "china_share_pct": 0.89,
-      "us_net_import_reliance_pct": 25.0,
+      "us_net_import_reliance_pct": 79.0,
       "provenance": {
         "source": "usgs_mcs",
         "title": "USGS Mineral Commodity Summaries 2026 — Cobalt",
@@ -637,7 +637,7 @@
       "top_country": "China",
       "top_share_pct": 89.0,
       "china_share_pct": 89.0,
-      "us_net_import_reliance_pct": 0.0,
+      "us_net_import_reliance_pct": 75.0,
       "provenance": {
         "source": "usgs_mcs",
         "title": "USGS Mineral Commodity Summaries 2026 — Magnesium Metal",
@@ -753,7 +753,7 @@
       "top_country": "South Africa",
       "top_share_pct": 65.0,
       "china_share_pct": 0.0,
-      "us_net_import_reliance_pct": 0.0,
+      "us_net_import_reliance_pct": 89.0,
       "provenance": {
         "source": "usgs_mcs",
         "title": "USGS Mineral Commodity Summaries 2026 — Platinum-Group Metals",
@@ -889,7 +889,7 @@
       "top_country": "China",
       "top_share_pct": 23.13,
       "china_share_pct": 23.13,
-      "us_net_import_reliance_pct": null,
+      "us_net_import_reliance_pct": 77.0,
       "provenance": {
         "source": "usgs_mcs",
         "title": "USGS Mineral Commodity Summaries 2026 — Tin",
@@ -967,7 +967,7 @@
       "top_country": "China",
       "top_share_pct": 61.64,
       "china_share_pct": 61.64,
-      "us_net_import_reliance_pct": 6.0,
+      "us_net_import_reliance_pct": 60.0,
       "provenance": {
         "source": "usgs_mcs",
         "title": "USGS Mineral Commodity Summaries 2026 — Aluminum",
@@ -1209,7 +1209,7 @@
       "top_country": "United States",
       "top_share_pct": 42.63,
       "china_share_pct": 1.58,
-      "us_net_import_reliance_pct": 98.0,
+      "us_net_import_reliance_pct": 0.0,
       "provenance": {
         "source": "usgs_mcs",
         "title": "USGS Mineral Commodity Summaries 2026 — Helium",

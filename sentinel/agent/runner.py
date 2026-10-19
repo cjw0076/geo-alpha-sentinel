@@ -635,8 +635,9 @@ def run_analysis(ticker: str, scenario: Scenario) -> Iterator[Union[AgentEvent, 
         "rejected_claims": sum(1 for c in claims if not c.verified),
         "evidence_items": len(run.ledger.items),
         "graph_triples": graph_triples,
+        "exposure_by_channel": chans,
     }
-    yield run.emit("system", "done", f"Run complete in {run.ms() / 1000:.1f}s", data={"ms": run.ms(), "engine": {k: v for k, v in engine.items() if k != "graph_triples"}})
+    yield run.emit("system", "done", f"Run complete in {run.ms() / 1000:.1f}s", data={"ms": run.ms(), "engine": {k: v for k, v in engine.items() if k not in ("graph_triples",)}})
     yield AnalysisResult(
         run_id=run.run_id,
         ticker=profile.ticker,

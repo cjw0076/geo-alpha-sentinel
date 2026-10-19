@@ -172,6 +172,9 @@ UN Comtrade is the premier international trade database maintained by the United
   4. Ranks top 10 supplying partner nations by dollar value (`primaryValue`).
   5. Computes market share percentages: $\text{share\_pct} = \left(\frac{\text{value\_usd}}{\text{total\_usd}}\right) \times 100$.
   6. Computes import concentration: $\text{HHI} = \sum_{j} (\text{share\_pct}_j)^2$.
+
+> **Note on Partner Areas**: In accordance with standard UN Comtrade convention, `partnerCode 490` ('Other Asia, nes' — Not Elsewhere Specified) represents Taiwan. In the Sentinel platform, this is explicitly displayed as `Taiwan (Other Asia, nes)` to accurately reflect semiconductor foundry (TSMC) and electronics supply-chain dependencies.
+
 - **Refresh Command**:
   ```bash
   python3 -c "from sentinel.sources.comtrade import import_dependency; r = import_dependency('8542'); print(r['hs'], r['total_usd'], r['hhi'])"

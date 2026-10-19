@@ -1,0 +1,44 @@
+name: pages
+# Daily: run the real multi-agent pipeline against live public sources and publish
+# the terminal + fresh snapshots to GitHub Pages.
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 21 * * *"   # 06:17 KST
+  workflow_dispatch: {}
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Refresh snapshots (live SEC / PortWatch / FRED)
+        env:
+          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT || 'GeoAlphaSentinel admin@geoalphasentinel.org' }}
+          AI_GATEWAY_API_KEY: ${{ secrets.AI_GATEWAY_API_KEY }}
+        run: python etl/build_snapshots.py || echo "::warning::snapshot refresh failed; publishing committed snapshots"
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

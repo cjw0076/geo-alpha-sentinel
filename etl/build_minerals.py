@@ -195,25 +195,65 @@ def extract_pdf_layout(pdf_bytes: bytes) -> str:
         )
 
 
-def parse_net_import_reliance(page1_text: str) -> Optional[float]:
-    """Parse latest-year US net import reliance percentage from Salient Statistics."""
-    lines = page1_text.split("\n")
-    target_lines: List[str] = []
-    capture = False
-    for line in lines:
-        if "Net import reliance" in line:
-            capture = True
-        if capture:
-            target_lines.append(line)
-            if any(term in line for term in ["Recycling:", "Import sources", "Tariff:", "Depletion"]):
-                break
-            if len(target_lines) > 5:
-                break
+def parse_net_import_reliance(cid: str, page1_text: str) -> Optional[float]:
+    """Parse latest-year US net import reliance percentage from Salient Statistics.
 
-    combined = " ".join(target_lines)
-    # Search for tokens like >95, <50, 100, E, W, — at column positions
-    # Find all tokens that look like reliance values
-    tokens = re.findall(r"(?:>|<)?\b\d+\b|(?<![a-zA-Z])E(?![a-zA-Z])|(?<![a-zA-Z])W(?![a-zA-Z])|—", combined)
+    Targets specific sub-rows according to USGS MCS 2026 structure:
+    - rare-earths: 'Compounds and metals' row (excludes mineral concentrates 'E')
+    - platinum-group: 'Platinum' row (excludes palladium and production rows)
+    - silicon: 'Total' row (aggregates ferrosilicon and silicon metal)
+    - helium: 'Helium' row (net exporter 'E' -> 0.0, excludes xenon/krypton)
+    - default: primary 'Net import reliance' row
+    """
+    lines = page1_text.split("\n")
+    nir_idx = None
+    for i, l in enumerate(lines):
+        if "net import reliance" in l.lower():
+            nir_idx = i
+            break
+    if nir_idx is None:
+        return None
+
+    # Inspect lines strictly within the Net import reliance block (before next section header)
+    block = lines[nir_idx : nir_idx + 10]
+    filtered_block: List[str] = []
+    for l in block:
+        if any(term in l.lower() for term in ["recycling:", "import sources", "tariff:", "depletion"]):
+            break
+        filtered_block.append(l)
+
+    target_line: Optional[str] = None
+    if cid == "rare-earths":
+        for l in filtered_block:
+            if "compounds and metals" in l.lower():
+                target_line = l
+                break
+    elif cid == "platinum-group":
+        for l in filtered_block:
+            if "platinum" in l.lower() and "metals" not in l.lower():
+                target_line = l
+                break
+    elif cid == "silicon":
+        for l in filtered_block:
+            if "total" in l.lower():
+                target_line = l
+                break
+    elif cid == "helium":
+        for l in filtered_block:
+            if "helium" in l.lower() and "reliance" not in l.lower():
+                target_line = l
+                break
+    else:
+        # Default is the first line containing net import reliance
+        target_line = filtered_block[0] if filtered_block else None
+
+    if not target_line:
+        return None
+
+    tokens = re.findall(
+        r"(?:>|<)?\b\d+\b|(?<![a-zA-Z])E(?![a-zA-Z])|(?<![a-zA-Z])W(?![a-zA-Z])|—",
+        target_line,
+    )
     if not tokens:
         return None
 
@@ -222,9 +262,7 @@ def parse_net_import_reliance(page1_text: str) -> Optional[float]:
         return 0.0
     if last in ["W", "—", "NA"]:
         return None
-    if last.startswith(">"):
-        return float(last[1:])
-    if last.startswith("<"):
+    if last.startswith(">") or last.startswith("<"):
         return float(last[1:])
     try:
         val = float(last)
@@ -242,10 +280,10 @@ def parse_commodity(cfg: Dict[str, str]) -> Optional[Mineral]:
     p1 = pages[0]
     p2 = pages[1] if len(pages) > 1 else text
 
-    nir_pct = parse_net_import_reliance(p1)
+    cid = cfg["id"]
+    nir_pct = parse_net_import_reliance(cid, p1)
 
     # Specific parsing per commodity based on verified USGS MCS 2026 layout
-    cid = cfg["id"]
     parsed_countries: List[Tuple[str, float]] = []
     world_total: Optional[float] = None
 
@@ -639,7 +677,7 @@ def build_minerals() -> Dict[str, Any]:
     result = {
         "edition": "MCS 2026",
         "generated_at": utcnow_iso(),
-        "items": [m.dict() for m in minerals],
+        "items": [m.model_dump() for m in minerals],
         "omitted": omitted,
     }
 

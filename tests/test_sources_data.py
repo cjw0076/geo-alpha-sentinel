@@ -102,6 +102,40 @@ def test_minerals_find_and_aliases():
     assert "titanium" in ids
 
 
+def test_minerals_net_import_reliance():
+    _, minerals = get_minerals()
+    by_id = {m.id: m for m in minerals}
+
+    expected_nir = {
+        "rare-earths": 67.0,
+        "gallium": 100.0,
+        "graphite": 100.0,
+        "lithium": 50.0,
+        "cobalt": 79.0,
+        "nickel": 41.0,
+        "copper": 57.0,
+        "tungsten": 50.0,
+        "antimony": 91.0,
+        "magnesium": 75.0,
+        "manganese": 100.0,
+        "platinum-group": 89.0,
+        "silicon": 50.0,
+        "tin": 77.0,
+        "aluminum": 60.0,
+        "indium": 100.0,
+        "vanadium": 41.0,
+        "titanium": 88.0,
+        "helium": 0.0,
+        "tantalum": 100.0,
+    }
+
+    for mid, exp_val in expected_nir.items():
+        assert mid in by_id, f"Missing mineral {mid}"
+        actual = by_id[mid].us_net_import_reliance_pct
+        assert actual is not None, f"NIR is None for {mid}"
+        assert actual == exp_val, f"NIR mismatch for {mid}: got {actual}, expected {exp_val}"
+
+
 # ---------------------------------------------------------------------------
 # 2. Offline Tests: Trade.gov CSL Sanction Screening
 # ---------------------------------------------------------------------------
