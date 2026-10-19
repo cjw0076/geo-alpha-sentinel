@@ -13,6 +13,8 @@ from __future__ import annotations
 
 import ast
 import math
+import multiprocessing
+import os
 import threading
 import time
 from typing import Any, Dict
@@ -71,22 +73,62 @@ def validate(code: str) -> ast.Module:
     return tree
 
 
-def run(code: str, inputs: Dict[str, Any], timeout_s: float = 5.0) -> Dict[str, Any]:
-    """Execute `code` with `inputs` bound as variables; return {'result', 'ms'}."""
-    tree = validate(code)
+def _exec(tree: ast.Module, inputs: Dict[str, Any]) -> Any:
     env: Dict[str, Any] = {"__builtins__": SAFE_BUILTINS, "np": np, "math": math}
     env.update(inputs)
+    exec(compile(tree, "<sentinel-sandbox>", "exec"), env, env)  # noqa: S102 - validated AST
+    if env.get("result") is None:
+        raise SandboxError("program did not assign `result`")
+    return _plain(env["result"])
+
+
+def _child(conn, tree, inputs, timeout_s):  # runs in a forked process
+    try:
+        import resource
+
+        resource.setrlimit(resource.RLIMIT_CPU, (int(timeout_s) + 1, int(timeout_s) + 2))
+        conn.send(("ok", _exec(tree, inputs)))
+    except BaseException as exc:
+        conn.send(("err", f"{type(exc).__name__}: {exc}"))
+    finally:
+        conn.close()
+
+
+def run(code: str, inputs: Dict[str, Any], timeout_s: float = 5.0, isolate: bool = False) -> Dict[str, Any]:
+    """Execute `code` with `inputs` bound as variables; return {'result', 'ms'}.
+
+    `isolate=True` (use for model-written programs) forks a child process with a
+    CPU rlimit and kills it on timeout. Trusted programs shipped in this
+    repository run in-process on a watchdog thread.
+    """
+    tree = validate(code)
+    t0 = time.perf_counter()
+    if isolate and hasattr(os, "fork"):
+        ctx = multiprocessing.get_context("fork")
+        parent, child = ctx.Pipe(duplex=False)
+        proc = ctx.Process(target=_child, args=(child, tree, inputs, timeout_s), daemon=True)
+        proc.start()
+        child.close()
+        ready = parent.poll(timeout_s)
+        if not ready:
+            proc.kill()
+            proc.join(1)
+            raise SandboxError(f"timeout after {timeout_s}s")
+        status, payload = parent.recv()
+        proc.join(1)
+        if status != "ok":
+            raise SandboxError(payload)
+        return {"result": payload, "ms": round((time.perf_counter() - t0) * 1000, 1)}
+
     out: Dict[str, Any] = {}
     err: Dict[str, BaseException] = {}
 
     def target():
         try:
-            exec(compile(tree, "<sentinel-sandbox>", "exec"), env, env)  # noqa: S102 - validated AST
-            out["result"] = env.get("result")
+            out["result"] = _exec(tree, inputs)
         except BaseException as exc:  # surfaced to caller
             err["e"] = exc
 
-    t0 = time.perf_counter()
     th = threading.Thread(target=target, daemon=True)
     th.start()
     th.join(timeout_s)
@@ -94,10 +136,9 @@ def run(code: str, inputs: Dict[str, Any], timeout_s: float = 5.0) -> Dict[str, 
     if th.is_alive():
         raise SandboxError(f"timeout after {timeout_s}s")
     if "e" in err:
-        raise SandboxError(f"{type(err['e']).__name__}: {err['e']}")
-    if "result" not in out or out["result"] is None:
-        raise SandboxError("program did not assign `result`")
-    return {"result": _plain(out["result"]), "ms": round(ms, 1)}
+        e = err["e"]
+        raise e if isinstance(e, SandboxError) else SandboxError(f"{type(e).__name__}: {e}")
+    return {"result": out["result"], "ms": round(ms, 1)}
 
 
 def _plain(x: Any) -> Any:
