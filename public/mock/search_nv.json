@@ -1,0 +1,62 @@
+[
+ {
+  "ticker": "NVS",
+  "cik": "0001114448",
+  "name": "NOVARTIS AG"
+ },
+ {
+  "ticker": "NVO",
+  "cik": "0000353278",
+  "name": "NOVO NORDISK A S"
+ },
+ {
+  "ticker": "NVT",
+  "cik": "0001720635",
+  "name": "nVent Electric plc"
+ },
+ {
+  "ticker": "NVR",
+  "cik": "0000906163",
+  "name": "NVR INC"
+ },
+ {
+  "ticker": "NVG",
+  "cik": "0001090116",
+  "name": "Nuveen AMT-Free Municipal Credit Income Fund"
+ },
+ {
+  "ticker": "NVA",
+  "cik": "0001852551",
+  "name": "Nova Minerals Corp"
+ },
+ {
+  "ticker": "NVX",
+  "cik": "0001859795",
+  "name": "NOVONIX Ltd"
+ },
+ {
+  "ticker": "NVDA",
+  "cik": "0001045810",
+  "name": "NVIDIA CORP"
+ },
+ {
+  "ticker": "NVMI",
+  "cik": "0001109345",
+  "name": "NOVA LTD."
+ },
+ {
+  "ticker": "NVST",
+  "cik": "0001757073",
+  "name": "Envista Holdings Corp"
+ },
+ {
+  "ticker": "NVTS",
+  "cik": "0001821769",
+  "name": "Navitas Semiconductor Corp"
+ },
+ {
+  "ticker": "NVAX",
+  "cik": "0001000694",
+  "name": "NOVAVAX INC"
+ }
+]

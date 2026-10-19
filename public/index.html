@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#000000">
+  <title>Geo-Alpha Sentinel · KIC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/terminal.css">
+  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+</head>
+<body>
+  <header id="topbar" class="topbar">
+    <div class="brand">GEO-ALPHA SENTINEL <b>KIC</b></div>
+    <div class="command-wrap"><span class="command-glyph">›</span><input id="command" autocomplete="off" spellcheck="false" aria-label="Terminal command" placeholder="TICKER &lt;GO&gt;  e.g. NVDA RISK · TSM 4W · CHKP · HELP"><span class="command-caret">▌</span><div id="suggestions" class="suggestions" hidden></div></div>
+    <div class="top-meta"><span id="mode-badge" class="mode-badge" hidden>MOCK</span><span id="engine"><i class="led"></i>ENGINE: CONNECTING</span><span id="clocks"></span></div>
+  </header>
+  <div id="status" class="status" hidden></div>
+  <div class="app-shell">
+    <nav id="rail" class="rail" aria-label="Functions"></nav>
+    <main id="main"><div id="welcome" class="welcome"><strong>GEO-ALPHA SENTINEL</strong><span>Physical chokepoint intelligence for public markets · 실물 병목과 기업 실적을 잇는 분석 터미널</span><span>Type a ticker, then &lt;GO&gt;</span><div id="chips"></div></div><div id="grid" class="grid"></div></main>
+  </div>
+  <div id="ticker" class="ticker"><div id="ticker-content" class="ticker-content">GEO-ALPHA SENTINEL · IMF PORTWATCH AIS LINK INITIALIZING</div></div>
+  <div id="drawer-scrim" class="drawer-scrim" hidden></div><aside id="drawer" class="drawer" aria-label="Evidence details" aria-hidden="true"><header><span>EVIDENCE LEDGER</span><button id="drawer-close" aria-label="Close evidence">✕</button></header><div id="drawer-content"></div></aside>
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
