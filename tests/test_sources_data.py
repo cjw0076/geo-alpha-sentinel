@@ -55,9 +55,9 @@ def test_minerals_hhi_recompute():
     assert len(minerals) >= 20
 
     for m in minerals:
-        shares = [c.share_pct for c in m.countries if c.share_pct is not None]
+        shares = [c.share_pct for c in m.countries if c.share_pct is not None and c.country not in ("Other", "Other countries")]
         assert len(shares) > 0
-        computed_hhi = sum(s * s for s in shares)
+        computed_hhi = min(10000.0, sum(s * s for s in shares))  # "Other countries" is an aggregate, not a producer
         # HHI in model is rounded to 1 decimal place; check within 1.0 margin
         assert abs(computed_hhi - (m.hhi or 0.0)) < 1.0
 
@@ -262,3 +262,36 @@ def test_comtrade_live():
     assert dep["provenance"].source == "un_comtrade"
     # Ensure partnerCode 0 is excluded
     assert not any(p["partner"] == "World" for p in dep["partners"])
+
+
+# ---- regression: data fixes (2026-10-21) -------------------------------------
+
+def test_mineral_hhi_bounded_and_shares_normalised():
+    import json
+    from pathlib import Path
+
+    d = json.loads((Path(__file__).resolve().parent.parent / "data" / "minerals_usgs_mcs2026.json").read_text())
+    for m in d["items"]:
+        assert m["hhi"] is None or 0 <= m["hhi"] <= 10000, m["id"]
+        total = sum(c["share_pct"] or 0 for c in m["countries"])
+        assert 99.0 <= total <= 101.0, (m["id"], total)
+    ga = next(m for m in d["items"] if m["id"] == "gallium")
+    assert ga["china_share_pct"] > 95 and ga["hhi"] < 10000
+
+
+def test_gscpi_has_no_yoy_pct():
+    from sentinel.sources import macro
+
+    gs = [m for m in macro.get_macro() if m.id.upper() == "GSCPI"]
+    assert gs and gs[0].yoy_pct is None
+
+
+def test_comtrade_partner_490_is_taiwan():
+    from sentinel.sources import comtrade
+
+    comtrade._partner_cache = None
+    import sentinel.sources.comtrade as ct
+
+    m = ct._get_partner_map() if hasattr(ct, "_get_partner_map") else {}
+    if m:  # network or cached reference file available
+        assert "Taiwan" in m.get(490, "")

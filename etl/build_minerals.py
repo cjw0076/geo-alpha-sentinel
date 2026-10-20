@@ -603,7 +603,7 @@ def parse_commodity(cfg: Dict[str, str]) -> Optional[Mineral]:
     if not parsed_countries:
         return None
 
-    denom = world_total if world_total else sum(v for _, v in parsed_countries)
+    denom = sum(v for _, v in parsed_countries)
 
     country_models: List[MineralCountry] = []
     hhi = 0.0
@@ -611,10 +611,13 @@ def parse_commodity(cfg: Dict[str, str]) -> Optional[Mineral]:
 
     for c_name, val in parsed_countries:
         share = round((val / denom) * 100.0, 2)
-        hhi += share * share
+        if c_name not in ["Other", "Other countries"]:
+            hhi += share * share
         if c_name == "China":
             china_share = share
         country_models.append(MineralCountry(country=c_name, value=val, share_pct=share))
+
+    hhi = min(10000.0, round(hhi, 1))
 
     # Sort descending by share_pct
     country_models.sort(key=lambda x: (x.share_pct or 0.0), reverse=True)

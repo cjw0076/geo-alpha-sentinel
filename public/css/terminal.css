@@ -10,3 +10,4 @@
 @media(max-width:760px){.panel{height:auto;min-height:180px}.panel[data-panel=WGLB]{height:285px}.panel[data-panel='4W'] .panel-body{max-height:none}.panel[data-panel=DES] .panel-body,.panel[data-panel=CHKP] .panel-body,.panel[data-panel=MINR] .panel-body{max-height:360px}}
 .risk-far .gauge{background:linear-gradient(90deg,var(--neg),var(--amber),var(--pos))}
 .memo-actions{position:relative}.share-menu{position:absolute;right:53px;top:22px;z-index:4;border:1px solid var(--amber-dim);background:#141414;min-width:115px;box-shadow:0 8px 18px #000}.share-menu a{display:block;padding:5px 8px;font-size:9px}.share-menu a:hover{background:var(--sel);text-decoration:none}
+.graph-triples{border-top:1px solid var(--line);margin-top:5px}.graph-triples>summary{cursor:pointer;color:var(--amber);font-size:10px;padding:4px 2px}.graph-triples table{margin-top:3px}.graph-triples td:nth-child(3){white-space:normal;min-width:120px}
