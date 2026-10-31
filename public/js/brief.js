@@ -42,6 +42,8 @@ function chipLabel(e) {
   if (src === 'sec_edgar') return /N-?PORT|ACWI/i.test(t) ? '벤치마크 N-PORT' : /13F/i.test(t) ? 'KIC 13F' : 'SEC 공시';
   if (src === 'imf_portwatch') { const m = title.match(/—\s*(.+)$/) || label.match(/^([^:]+):/); return m ? `${koChokepoint(m[1].trim())} 통항` : '해상 통항'; }
   if (src === 'usgs_mcs') return '광물 집중도';
+  if (/threshold/i.test(t)) return '실질 노출 기준 (노출도 ≥ 0.5)';
+  if (/weight share of covered holdings/i.test(t)) return /ACWI|benchmark/i.test(t) ? '벤치마크 실질 노출 비중' : 'KIC 보유 실질 노출 비중';
   if (/active exposure/i.test(t)) return '벤치마크 대비 초과 노출';
   if (/exposure-weighted share/i.test(t)) return '보유 노출 비중';
   if (/FCF shock|Monte Carlo/i.test(t)) return '공동 시나리오';
@@ -92,9 +94,11 @@ function renderNumbers() {
   const p = S.portfolio, hc = S.hc, ci = (p.channels || []).indexOf(hc), st = p.stress || {}, v = S.validation?.summary;
   const target = hc ? (hc.chokepoint_id || hc.id) : '';
   const a = hc ? `<div class="b-num">
-      <h2>초과 노출</h2>
-      <p class="b-big">${num(hc.active_pp, { sign: true, unit: '%p', src: `${S.src}#/channels/${ci}/active_pp`, ev: `${p.book?.evidence_id || ''} ${p.benchmark?.evidence_id || ''}`.trim(), ledger: 'portfolio' })}</p>
-      <p class="b-expl">벤치마크 대비, ${esc(unfix(hc.label_ko) || CHANNELS[hc.id]?.ko || hc.id)} 경로</p>
+      <h2>실질 노출 비중 차이</h2>
+      <p class="b-big">${hc.material_active_pp != null
+        ? num(hc.material_active_pp, { sign: true, unit: '%p', src: `${S.src}#/channels/${ci}/material_active_pp`, ev: (hc.evidence_ids || []).join(' '), ledger: 'portfolio' })
+        : num(hc.active_pp, { sign: true, unit: '%p', src: `${S.src}#/channels/${ci}/active_pp`, ev: `${p.book?.evidence_id || ''} ${p.benchmark?.evidence_id || ''}`.trim(), ledger: 'portfolio' })}</p>
+      <p class="b-expl">${hc.material_active_pp != null ? `보유 ${num(hc.book_material_pct, { unit: '%', src: `${S.src}#/channels/${ci}/book_material_pct`, ledger: 'portfolio' })} vs 벤치마크 ${num(hc.bench_material_pct, { unit: '%', src: `${S.src}#/channels/${ci}/bench_material_pct`, ledger: 'portfolio' })} · ` : '벤치마크 대비, '}${esc(unfix(hc.label_ko) || CHANNELS[hc.id]?.ko || hc.id)} 경로</p>
       <button type="button" class="b-more" data-open-chokepoint="${esc(target)}">근거 <span aria-hidden="true">›</span></button>
     </div>` : '';
   const b = st.book ? `<div class="b-num">

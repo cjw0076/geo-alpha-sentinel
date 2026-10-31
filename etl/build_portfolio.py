@@ -146,6 +146,8 @@ def main() -> None:
                 "source": kic.source, "weight_basis": "13f", "max_names": args.max_names, "max_bench": args.max_bench}
     view = P.build_view(kic_meta, bench_meta, book_sel, bench_sel, bench_pos, vectors, chks, paths=args.paths, seed=args.seed)
     view["chokepoints_as_of"] = as_of_chk
+    view["build"] = {"runtime_s": round(time.time() - T0, 1), "workers": args.workers, "issuers_analysed": len(vectors),
+                     "vectors_from_cache": bool(args.vectors_cache)}
     size = dump(OUT / "kic13f.json", view)
     log(f"wrote {OUT / 'kic13f.json'} ({size / 1024:.0f} KB)")
     summary(view)
