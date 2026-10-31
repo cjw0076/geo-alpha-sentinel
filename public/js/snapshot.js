@@ -242,7 +242,7 @@ export const PORTWATCH = {
 
 const pyStr = v => (v === null || v === undefined ? 'None' : String(v));
 
-async function arcgisQuery(fetchImpl, url, params, signal, retries = 2) {
+async function arcgisQuery(fetchImpl, url, params, signal, retries = 4) {
   const qs = new URLSearchParams(Object.entries(params).map(([k, v]) => [k, String(v)])).toString();
   for (let attempt = 0; ; attempt++) {
     try {
@@ -256,7 +256,7 @@ async function arcgisQuery(fetchImpl, url, params, signal, retries = 2) {
     } catch (err) {
       const retryable = err && (err.retryable || err.name === 'TypeError'); // TypeError = network failure
       if (attempt >= retries || !retryable || (signal && signal.aborted)) throw err;
-      await new Promise(resolve => setTimeout(resolve, 300 * (attempt + 1)));
+      await new Promise(resolve => setTimeout(resolve, Math.min(500 * 2 ** attempt, 4000))); // ArcGIS sends intermittent error bodies
     }
   }
 }
@@ -305,7 +305,7 @@ export async function fetchPortWatchRaw({
     outFields: 'date,portid,portname,n_total,capacity',
     ...(orderByFields ? { orderByFields } : {}),
     resultOffset: offset,
-    resultRecordCount: 2000,
+    resultRecordCount: PORTWATCH_SERVER_PAGE,
     returnGeometry: 'false',
     f: 'json',
   }, signal));

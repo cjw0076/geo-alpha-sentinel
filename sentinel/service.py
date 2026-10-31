@@ -111,6 +111,8 @@ def stress_context(ticker: str) -> Dict[str, Any]:
         rev = M.latest(p, "revenue") or 1.0
         gp = M.latest(p, "gross_profit")
         gm = gp / rev if gp and rev else 0.5
+        if not -1.0 <= gm <= 1.0:  # revenue missing or in a different unit than gross profit
+            gm = 0.5
         cfo, capex = M.latest(p, "cfo"), M.latest(p, "capex")
         fcf = (cfo - capex) if cfo is not None and capex is not None else 0.1 * rev
         base_year = p.fundamentals["revenue"][-1].fy if p.fundamentals.get("revenue") else 2025
