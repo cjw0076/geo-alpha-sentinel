@@ -5,12 +5,15 @@ Fetches coordinates/metadata and daily transits from the IMF PortWatch ArcGIS RE
 
 from __future__ import annotations
 
+import json
+import time
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 
-from sentinel.http import fetch_json
+from sentinel.http import _cache_path, fetch_json
 from sentinel.models import Chokepoint, ChokepointPoint, Provenance
 
 CHOKEPOINT_META_URL = (
@@ -38,6 +41,22 @@ PORTWATCH_URL = "https://portwatch.imf.org/pages/chokepoints"
 PORTWATCH_LICENSE = "IMF PortWatch — free to use with attribution (see portwatch.imf.org terms)"
 
 
+LAST_GOOD_SNAPSHOT = Path(__file__).resolve().parents[2] / "public" / "snapshots" / "chokepoints.json"
+PAGE_SIZE = 1000  # the service's maxRecordCount
+
+
+def _query(url: str, params: Dict[str, object], ttl: int, attempts: int = 5) -> Tuple[Dict, str]:
+    """ArcGIS answers some valid queries with an HTTP-200 error body; never cache those, retry with backoff."""
+    for attempt in range(attempts):
+        data, retrieved_at = fetch_json(url, params=params, ttl=ttl if attempt == 0 else 0)
+        if "error" not in data:
+            return data, retrieved_at
+        for path in (_cache_path(url, params), _cache_path(url, params).with_suffix(".meta")):
+            path.unlink(missing_ok=True)
+        time.sleep(min(2 ** attempt, 16))
+    raise RuntimeError(f"PortWatch query failed after {attempts} attempts: {data.get('error')}")
+
+
 def _fetch_metadata() -> Tuple[Dict[str, Dict[str, float | str]], str]:
     """Fetch 28 chokepoint coordinates and names (ttl 7 days)."""
     params = {
@@ -46,7 +65,7 @@ def _fetch_metadata() -> Tuple[Dict[str, Dict[str, float | str]], str]:
         "returnGeometry": "false",
         "f": "json",
     }
-    data, retrieved_at = fetch_json(CHOKEPOINT_META_URL, params=params, ttl=7 * 86400)
+    data, retrieved_at = _query(CHOKEPOINT_META_URL, params, ttl=7 * 86400)
     meta: Dict[str, Dict[str, float | str]] = {}
     for feature in data.get("features", []):
         attr = feature.get("attributes", {})
@@ -73,11 +92,11 @@ def _fetch_daily_transits() -> Tuple[Dict[str, List[Dict[str, object]]], str]:
             "outFields": "date,portid,portname,n_total,capacity",
             "orderByFields": "date ASC",
             "resultOffset": offset,
-            "resultRecordCount": 2000,
+            "resultRecordCount": PAGE_SIZE,
             "returnGeometry": "false",
             "f": "json",
         }
-        data, retrieved_at = fetch_json(CHOKEPOINT_DAILY_URL, params=params, ttl=6 * 3600)
+        data, retrieved_at = _query(CHOKEPOINT_DAILY_URL, params, ttl=6 * 3600)
         last_retrieved = retrieved_at
         features = data.get("features", [])
         if not features:
@@ -100,7 +119,7 @@ def _fetch_daily_transits() -> Tuple[Dict[str, List[Dict[str, object]]], str]:
     return records_by_port, last_retrieved
 
 
-def get_chokepoints() -> Tuple[str, List[Chokepoint]]:
+def _compute_chokepoints() -> Tuple[str, List[Chokepoint]]:
     """Return (as_of_date, items) for all 28 IMF PortWatch chokepoints.
 
     Calculates:
@@ -193,3 +212,19 @@ def get_chokepoints() -> Tuple[str, List[Chokepoint]]:
     as_of_date = max(latest_dates) if latest_dates else datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
     return as_of_date, chokepoints
+
+
+def get_chokepoints() -> Tuple[str, List[Chokepoint]]:
+    """Live PortWatch figures; if the service fails or returns no transits, the last good published snapshot."""
+    try:
+        as_of, items = _compute_chokepoints()
+        if items:
+            return as_of, items
+        err: Exception = RuntimeError("PortWatch returned no daily transits")
+    except Exception as exc:
+        err = exc
+    if LAST_GOOD_SNAPSHOT.exists():
+        snap = json.loads(LAST_GOOD_SNAPSHOT.read_text(encoding="utf-8"))
+        if snap.get("items"):
+            return snap["as_of"], [Chokepoint(**c) for c in snap["items"]]
+    raise RuntimeError(f"PortWatch unavailable and no snapshot to fall back on: {err}")
