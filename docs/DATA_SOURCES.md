@@ -17,6 +17,10 @@
 | **NY Fed GSCPI** | 뉴욕 연방준비은행 | 공식 엑셀 스냅샷 | 2026-09-30 | Attribution (Free use with attribution) | 글로벌 공급망 압력지수 345개월 시계열 파싱, 60개월 윈도우 보존, 12M YoY % 산출 |
 | **UN Comtrade** | 유엔 통계국 (UNSD) | 실시간 미리보기 API (TTL 7d) | 2024 / 2023 | Non-commercial with attribution | 미국(842) 대상 9대 전략품목(반도체, 배터리, 자석, 구리 등) 수입액 집계, 월드(0) 분리, 상위 10개국 점유율 및 수입 HHI 계산 |
 | **SEC EDGAR** | 미국 증권거래위원회 (SEC) | 실시간 REST API (Live) | 실시간 (FY2025/26) | Public Domain (U.S. Government work) | CIK 매핑, Company Facts XBRL 재무제표(매출, 영업이익, CFO, Capex) 추출, 10-K Item 1A 위험요인 텍스트 프래그먼트 링크 생성 |
+| **SEC Form 13F-HR (KIC)** | 미국 증권거래위원회 (SEC EDGAR) — 한국투자공사 CIK 0001441689 | 정보표 XML (`etl/build_portfolio.py`, 분기) | 2026-10-31 수집 / 2026-06-30 기준 (2026-08-12 제출) | Public domain (SEC filing) | infoTable 677행 파싱, 표지 `tableValueTotal`과 합계 일치·주당 환산가로 달러/천달러 판정, CUSIP별 합산, 옵션행 비중 제외, 비중 = 평가액/합계 |
+| **SEC Form N-PORT-P (iShares MSCI ACWI ETF)** | SEC EDGAR — iShares Trust CIK 0001100663, 시리즈 S000021461 | `primary_doc.xml` (`etl/build_portfolio.py`) | 2026-10-31 수집 / 2026-07-31 기준 (2026-09-23 제출) | Public domain (SEC filing) | assetCat=EC 행만 유지, invCountry=KR 제거, 1로 재정규화 → MSCI ACWI ex Korea 대용 벤치마크 |
+| **OpenFIGI v3 mapping** | Bloomberg OpenFIGI | REST API (키 없음, 요청당 10건·분당 25회) → `data/identifier_map.json` 저장 | 2026-10-31 | FIGI 식별자 public domain (OpenFIGI ToS §1), as is, 보증·추천 아님 | CUSIP/CINS/ISIN → 미국 통합(US) 티커, SEC `company_tickers.json` 대조, 실패 시 정규화 회사명 일치 |
+| **Daily adjusted close (event validation only)** | Yahoo Finance chart API | 실행 시 조회 + 로컬 디스크 캐시 (`CACHE_DIR`) | 2018-03 – 2026-04 | Yahoo terms of service; 원시 가격 재배포 없음 | 로그수익률 → 시장모형(ACWI) 비정상수익률 → CAR, IC, 5분위 스프레드. **원시 가격은 저장소·`public/`에 기록하지 않고 파생 통계만 공개** |
 
 ---
 
@@ -182,7 +186,42 @@ UN Comtrade is the premier international trade database maintained by the United
 
 ---
 
-## 7. Zero-Hallucination Institutional Provenance Guarantee
+## 7. Daily Prices for Event Validation (Yahoo Finance chart API)
+
+- **Endpoint**: `https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?period1=..&period2=..&interval=1d&events=div,split` (User-Agent `Mozilla/5.0`).
+- **Code**: `sentinel/sources/prices.py::daily_adjclose(symbol, start, end)`; used only by `etl/build_eventstudy.py` (`docs/VALIDATION.md`).
+- **Collection**: one request per symbol for a fixed range (430 days before the first event to 45 days after the last), paced >= 0.35 s between live requests, disk-cached under `CACHE_DIR` (`SENTINEL_CACHE_DIR`, default `/tmp/sentinel-cache`, not committed).
+- **Terms note**: Yahoo Finance data is provided for personal/informational use under Yahoo's terms of service and is not licensed for redistribution. Sentinel therefore publishes **derived statistics only**: cumulative abnormal returns (pp) per issuer and event, rank ICs, quintile spreads and t statistics. Raw price or return series are never written to the repository or to `public/`; `tests/test_eventstudy.py` checks that `public/snapshots/validation/events.json` contains no numeric arrays longer than five values and no price/return keys.
+- **Preprocessing**: adjusted close → daily log returns on the ACWI trading calendar → market model (OLS α, β on trading days [−260, −30]) → abnormal returns → CAR[−1,+5] and CAR[−1,+20].
+
+---
+
+## 8. Holdings books for the portfolio lens (SEC Form 13F-HR, SEC Form N-PORT, OpenFIGI)
+
+Code: `sentinel/sources/holdings.py`; build: `python3 etl/build_portfolio.py` (writes `public/snapshots/portfolio/kic13f.json`, `public/snapshots/portfolio/coverage40.json`). Method: `docs/METHODOLOGY.md` §8.
+
+### 8.1 SEC Form 13F-HR — Korea Investment Corporation
+- **Source**: EDGAR submissions `https://data.sec.gov/submissions/CIK0001441689.json` → latest `13F-HR` → filing index `https://www.sec.gov/Archives/edgar/data/1441689/<accession>/index.json` → the information-table XML (the `.xml` that is not `primary_doc.xml`) and the cover page `primary_doc.xml`.
+- **Retrieved**: 2026-10-31. Filing used: accession 0001193125-26-345356, period 2026-06-30, filed 2026-08-12.
+- **License**: Public domain (SEC filing). SEC fair-access policy: declared User-Agent; this ETL limits itself to 4 requests/second (`install_sec_rate_limit`).
+- **Preprocessing**: every `infoTable` (nameOfIssuer, titleOfClass, cusip, value, sshPrnamt, sshPrnamtType, putCall) is parsed; `Σ value` must equal the cover `tableValueTotal` (±0.5%, or ×1000 when the table is in thousands); the median implied price per share decides dollars vs thousands (filings from 2023-01-03 report dollars); rows are aggregated by CUSIP; `putCall` rows are kept in `excluded` and carry no weight; weight = value / Σ value of non-option rows. Measured on the filing above: 677 rows, $52,659,999,903 (equal to `tableValueTotal`), median implied price $117.98/share.
+- **Limits**: 13F covers Section 13(f) securities only (US-listed equities, ADRs, ETFs), not KIC's full portfolio; ETFs held in the book (e.g. iShares Core S&P 500 ETF) have no annual report and are reported as not covered.
+
+### 8.2 SEC Form N-PORT-P — iShares MSCI ACWI ETF (benchmark proxy)
+- **Source**: series id from `https://www.sec.gov/files/company_tickers_mf.json` (symbol ACWI → S000021461); the series' NPORT-P list from EDGAR browse (`cgi-bin/browse-edgar?action=getcompany&CIK=S000021461&type=NPORT-P&output=atom`); `primary_doc.xml` of the latest filing, checked against `genInfo/seriesName = "iShares MSCI ACWI ETF"`.
+- **Retrieved**: 2026-10-31. Filing used: accession 0001004726-26-008801, period 2026-07-31, filed 2026-09-23 (`--bench-period YYYY-MM-DD` selects the latest report on or before a date).
+- **License**: Public domain (SEC filing).
+- **Preprocessing**: `invstOrSec` rows (name, cusip, isin, valUSD, pctVal, invCountry, assetCat or assetConditional) are parsed; only `assetCat = EC` rows are kept; `invCountry = KR` rows are removed; values are renormalised to 1. Measured: 2,273 rows → 2,189 EC → 2,113 after removing 75 Korean rows (2.30% of EC value); 84 non-EC rows dropped (currency, futures, preferred, short-term vehicles, ADR/GDR/units coded `assetConditional OTHER`) and 1 EC row valued 0. Label: "MSCI ACWI ex Korea proxy — iShares MSCI ACWI ETF holdings (SEC N-PORT), Korea removed". This is a holdings-based proxy, not MSCI index data.
+
+### 8.3 OpenFIGI v3 mapping (identifiers → tickers)
+- **Endpoint**: `POST https://api.openfigi.com/v3/mapping`, no API key (≤ 10 jobs per request, ≤ 25 requests per minute; the client waits ≥ 2.5 s between requests and backs off on HTTP 429). Jobs: `ID_CUSIP` (or `ID_CINS` for foreign-form CUSIPs whose first character is a letter, or `ID_ISIN`) with `exchCode = US`.
+- **Terms and attribution**: OpenFIGI Terms of Service (2018-11-27) §1 dedicates FIGI identifiers to the public domain and permits use, display, reproduction and redistribution; data is provided as is; the "FIGI"/"OpenFIGI" names are used only to refer to the identifiers, with no endorsement implied. Attribution: "Identifier mapping via OpenFIGI.com".
+- **Retrieved**: 2026-10-31; stored in `data/identifier_map.json` (one entry per CUSIP/ISIN: US composite ticker, FIGI name, query form, retrieval time, and the resolved SEC ticker/CIK) so that rebuilds do not call OpenFIGI again.
+- **Preprocessing**: the US ticker is accepted only if it resolves in SEC `company_tickers.json`, and is replaced by that CIK's first listed ticker (TSMWF → TSM). Rows without such a ticker are matched by normalised issuer name (upper case, punctuation removed, legal-form suffixes removed; a unique SEC match is required). `map_method` (`openfigi`, `sec_name`, `none`) is kept per row. An issuer counts as an SEC filer when it has a 10-K, 20-F or 40-F on EDGAR.
+
+---
+
+## 9. Zero-Hallucination Institutional Provenance Guarantee
 
 Every data record returned by `sentinel.sources.*` conforms to the `Provenance` model:
 

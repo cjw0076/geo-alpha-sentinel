@@ -131,6 +131,58 @@ def latest_annual_filing(sub: Dict, cik: str) -> Optional[FilingRef]:
     return None
 
 
+PIT_ANNUAL_FORMS = ("10-K", "20-F")
+
+
+def _annual_before_in_block(block: Dict, cik: str, date: str, forms_wanted=PIT_ANNUAL_FORMS) -> Optional[FilingRef]:
+    """Latest original annual filing in one submissions block with filingDate < date (amendments excluded)."""
+    forms = block.get("form", [])
+    dates = block.get("filingDate", [])
+    best = None
+    for i, form in enumerate(forms):
+        if form in forms_wanted and dates[i] < date and (best is None or dates[i] > dates[best]):
+            best = i
+    if best is None:
+        return None
+    accn, doc = block["accessionNumber"][best], block["primaryDocument"][best]
+    period = (block.get("reportDate") or [None] * len(forms))[best] or None
+    return FilingRef(form=forms[best], filed=dates[best], period=period, accession=accn, primary_document=doc, url=filing_url(cik, accn, doc))
+
+
+def annual_filing_before(
+    sub: Dict, cik: str, date: str, max_age_days: int = 550, fetch=fetch_json, forms=PIT_ANNUAL_FORMS
+) -> Optional[FilingRef]:
+    """Point-in-time annual report: the latest original 10-K/20-F with filingDate < `date` (ISO).
+
+    Searches `filings.recent` and then the older `filings.files` pages (as `latest_annual_filing`
+    does). Returns None when nothing qualifies or the latest one is older than `max_age_days`.
+    `fetch` is injectable so tests can serve the older pages from fixtures.
+    """
+    from datetime import date as _date
+
+    filings = sub.get("filings", {})
+    candidates = []
+    found = _annual_before_in_block(filings.get("recent", {}), cik, date, forms)
+    if found:
+        candidates.append(found)
+    else:  # everything in `recent` is newer than the older pages, so only page when recent has nothing
+        for extra in filings.get("files", []):
+            if extra.get("filingFrom") and extra["filingFrom"] >= date:
+                continue  # page entirely on/after the cut-off
+            if candidates and extra.get("filingTo") and extra["filingTo"] < max(c.filed for c in candidates):
+                continue  # page entirely older than a hit already found
+            block, _ = fetch(f"https://data.sec.gov/submissions/{extra['name']}", ttl=30 * 86400)
+            hit = _annual_before_in_block(block, cik, date, forms)
+            if hit:
+                candidates.append(hit)
+    if not candidates:
+        return None
+    best = max(candidates, key=lambda f: f.filed)
+    if (_date.fromisoformat(date) - _date.fromisoformat(best.filed)).days > max_age_days:
+        return None
+    return best
+
+
 def _concept_points(facts: Dict, taxonomy: str, concept: str) -> Dict[int, FactPoint]:
     """One full-year value per fiscal year for a single XBRL concept (restatements win)."""
     from datetime import date

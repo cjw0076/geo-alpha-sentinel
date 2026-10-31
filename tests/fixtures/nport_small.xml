@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<edgarSubmission xmlns="http://www.sec.gov/edgar/nport" xmlns:com="http://www.sec.gov/edgar/common">
+  <formData>
+    <genInfo>
+      <regName>Example Trust</regName>
+      <regCik>0000000001</regCik>
+      <seriesName>Example MSCI ACWI ETF</seriesName>
+      <seriesId>S000000001</seriesId>
+      <repPdEnd>2026-07-31</repPdEnd>
+      <repPdDate>2026-07-31</repPdDate>
+    </genInfo>
+    <fundInfo><netAssets>1000.0</netAssets></fundInfo>
+    <invstOrSecs>
+      <invstOrSec>
+        <name>US ONE INC</name><title>US ONE INC</title><cusip>000000U11</cusip>
+        <identifiers><isin value="US000000U110"/><other otherDesc="Internal" value="000000U11"/></identifiers>
+        <balance>10</balance><units>NS</units><valUSD>400.0</valUSD><pctVal>40.0</pctVal>
+        <assetCat>EC</assetCat><invCountry>US</invCountry>
+      </invstOrSec>
+      <invstOrSec>
+        <name>US TWO INC</name><title>US TWO INC</title><cusip>000000U22</cusip>
+        <identifiers><isin value="US000000U227"/></identifiers>
+        <balance>5</balance><units>NS</units><valUSD>200.0</valUSD><pctVal>20.0</pctVal>
+        <assetCat>EC</assetCat><invCountry>US</invCountry>
+      </invstOrSec>
+      <invstOrSec>
+        <name>Korea Example Electronics Co., Ltd.</name><title>KOREA EXAMPLE</title><cusip>N/A</cusip>
+        <identifiers><isin value="KR7000000001"/></identifiers>
+        <balance>3</balance><units>NS</units><valUSD>100.0</valUSD><pctVal>10.0</pctVal>
+        <assetCat>EC</assetCat><invCountry>KR</invCountry>
+      </invstOrSec>
+      <invstOrSec>
+        <name>Japan Example Corporation</name><title>JAPAN EXAMPLE CORP</title><cusip>N/A</cusip>
+        <identifiers><isin value="JP0000000001"/></identifiers>
+        <balance>7</balance><units>NS</units><valUSD>200.0</valUSD><pctVal>20.0</pctVal>
+        <assetCat>EC</assetCat><invCountry>JP</invCountry>
+      </invstOrSec>
+      <invstOrSec>
+        <name>EURO</name><title>EURO</title><cusip>000000000</cusip>
+        <identifiers><other otherDesc="Internal" value="EUR"/></identifiers>
+        <balance>50</balance><units>OU</units><valUSD>50.0</valUSD><pctVal>5.0</pctVal>
+        <assetConditional assetCat="OTHER" desc="currency"/><invCountry>DE</invCountry>
+      </invstOrSec>
+      <invstOrSec>
+        <name>Example ADR Ltd.</name><title>EXAMPLE ADR</title><cusip>000000X33</cusip>
+        <identifiers><isin value="US000000X330"/></identifiers>
+        <balance>1</balance><units>NS</units><valUSD>30.0</valUSD><pctVal>3.0</pctVal>
+        <assetConditional assetCat="OTHER" desc="ADR"/><invCountry>KY</invCountry>
+      </invstOrSec>
+      <invstOrSec>
+        <name>S P500 EMINI FUT</name><title>ES FUT</title><cusip>N/A</cusip>
+        <identifiers><other otherDesc="Internal" value="ESU6"/></identifiers>
+        <balance>1</balance><units>NC</units><valUSD>20.0</valUSD><pctVal>2.0</pctVal>
+        <assetCat>DE</assetCat><invCountry>US</invCountry>
+      </invstOrSec>
+    </invstOrSecs>
+  </formData>
+</edgarSubmission>

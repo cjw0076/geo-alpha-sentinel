@@ -26,6 +26,7 @@ SourceId = Literal[
     "worldbank_cmo",    # World Bank Commodity Price Data (Pink Sheet), CC BY 4.0
     "fred",             # legacy id kept so older snapshots still parse; no longer fetched
     "nyfed_gscpi",      # NY Fed Global Supply Chain Pressure Index
+    "openfigi",         # OpenFIGI identifier mapping (CUSIP/ISIN -> ticker), used for holdings books
     "sandbox",          # value computed by the deterministic sandbox from other evidence
     "model",            # value computed by Sentinel methodology code from other evidence
 ]
@@ -301,3 +302,35 @@ class AnalysisResult(BaseModel):
     events: List[AgentEvent]
     engine: Dict[str, Any] = Field(..., description="{'llm': 'anthropic/claude-sonnet-5.5' | 'deterministic', 'replans': int, 'verified_claims': int, 'rejected_claims': int}")
     generated_at: str
+
+
+# ---------------------------------------------------------------------------
+# Holdings books (portfolio lens)
+# ---------------------------------------------------------------------------
+
+class HoldingRow(BaseModel):
+    name: str
+    cusip: Optional[str] = None
+    isin: Optional[str] = None
+    ticker: Optional[str] = Field(None, description="US ticker that resolves in SEC company_tickers.json")
+    cik: Optional[str] = None
+    value_usd: float
+    weight: float = Field(..., description="value / sum(value) over the book's included rows (0-1)")
+    map_method: str = Field("none", description="openfigi | sec_name | none")
+    sec_filer: bool = Field(False, description="ticker resolves via SEC and the issuer has a 10-K/20-F/40-F on EDGAR")
+    title_of_class: Optional[str] = None
+    country: Optional[str] = Field(None, description="N-PORT invCountry (benchmark rows)")
+    shares: Optional[float] = None
+    put_call: Optional[str] = None
+
+
+class HoldingsBook(BaseModel):
+    name: str
+    as_of: str = Field(..., description="Report period end (YYYY-MM-DD)")
+    filed: Optional[str] = None
+    source: Provenance
+    total_value_usd: float = Field(..., description="Sum of value_usd over `rows`")
+    rows: List[HoldingRow]
+    excluded: List[HoldingRow] = Field(default_factory=list, description="Rows kept for the record but not weighted (options, removed countries, non-equity)")
+    notes: List[str] = []
+
