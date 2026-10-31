@@ -18,6 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
+from sentinel import audit  # noqa: E402
 from sentinel.agent.runner import run_analysis  # noqa: E402
 from sentinel.models import AnalysisResult, Scenario  # noqa: E402
 from sentinel.http import utcnow_iso  # noqa: E402
@@ -75,7 +76,9 @@ def main(tickers: list[str]) -> None:
             print(f"[skip] {t}: no result ({events[-1]['title'] if events else 'no events'})", flush=True)
             continue
         d = OUT / result.ticker
+        rec = audit.append(OUT / "audit" / "ledger.jsonl", result)
         r = result.model_dump()
+        r["audit"] = {"hash": rec["hash"], "prev_hash": rec["prev_hash"], "code_version": rec["producer"]["code_version"], "ledger": "audit/ledger.jsonl"}
         size = dump(d / "analysis.json", r)
         dump(d / "company.json", r["company"])
         dump(d / "exposure.json", r["exposure"])
@@ -87,6 +90,7 @@ def main(tickers: list[str]) -> None:
             "recommendation": result.memo.recommendation, "rev_shock_p05": result.stress.revenue_shock_pct.get("p05"),
             "filing": result.company.latest_annual.model_dump() if result.company.latest_annual else None,
             "engine": result.engine.get("llm"), "generated_at": result.generated_at, "evidence_items": len(result.evidence),
+            "audit_hash": rec["hash"],
         })
         print(f"[ok] {result.ticker:6} {time.time() - t0:5.1f}s  {size / 1024:7.0f} KB  CPI {m['CPI'].value:5.1f} GPI {m['GPI'].value:5.1f} SRS {m['SRS'].value:5.1f} FAR {m['FAR'].rating:>3}  {result.memo.recommendation}", flush=True)
 
