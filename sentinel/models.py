@@ -23,7 +23,8 @@ SourceId = Literal[
     "usgs_mcs",         # USGS Mineral Commodity Summaries
     "trade_csl",        # US Trade.gov Consolidated Screening List
     "un_comtrade",      # UN Comtrade bilateral trade
-    "fred",             # FRED (St. Louis Fed) series
+    "worldbank_cmo",    # World Bank Commodity Price Data (Pink Sheet), CC BY 4.0
+    "fred",             # legacy id kept so older snapshots still parse; no longer fetched
     "nyfed_gscpi",      # NY Fed Global Supply Chain Pressure Index
     "sandbox",          # value computed by the deterministic sandbox from other evidence
     "model",            # value computed by Sentinel methodology code from other evidence

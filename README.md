@@ -37,7 +37,7 @@ Every figure on screen and in the exported PDF carries an evidence id. Clicking 
             │       └── replan ◄── Red-Team verifier ◄── Synthesizer ◄───┘     │
             │  Evidence ledger: every number/quote → Provenance(url, license)  │
             └──┬──────────┬───────────┬───────────┬──────────┬─────────┬──────┘
-           SEC EDGAR   IMF PortWatch  USGS MCS   Trade.gov   UN       FRED /
+           SEC EDGAR   IMF PortWatch  USGS MCS   Trade.gov   UN       World Bank /
            XBRL + 10-K (AIS, live)   2026        CSL        Comtrade  NY Fed GSCPI
 ```
 
@@ -73,6 +73,6 @@ Refresh snapshots: `python etl/build_minerals.py && python etl/build_sanctions.p
 
 ## Data & licenses
 
-All inputs are public. SEC EDGAR, USGS and Trade.gov data are U.S. Government works (public domain); IMF PortWatch, UN Comtrade, FRED and the NY Fed GSCPI are used with attribution under their terms. Collection dates, licenses and preprocessing are listed in [docs/DATA_SOURCES.md](docs/DATA_SOURCES.md).
+All inputs are public. SEC EDGAR, USGS and Trade.gov data are U.S. Government works (public domain); IMF PortWatch, UN Comtrade, the World Bank Pink Sheet (CC BY 4.0) and the NY Fed GSCPI are used with attribution under their terms. Collection dates, licenses and preprocessing are listed in [docs/DATA_SOURCES.md](docs/DATA_SOURCES.md).
 
 Code: Apache-2.0. Output is research tooling, **not investment advice / 투자 권유 아님**.

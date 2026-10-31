@@ -4,3 +4,4 @@ numpy>=1.26,<3
 pydantic>=2.6,<3
 reportlab>=3.6,<5
 pillow>=10.1,<13
+openpyxl>=3.1

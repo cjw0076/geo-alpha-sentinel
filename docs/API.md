@@ -12,7 +12,7 @@ Base path: `/api/v1`. All responses are JSON unless stated otherwise.
 | GET | `/api/v1/chokepoints` | `{as_of, items: [Chokepoint]}` | IMF PortWatch daily transits, 28 chokepoints |
 | GET | `/api/v1/minerals` | `{edition, items: [Mineral]}` | USGS Mineral Commodity Summaries snapshot |
 | GET | `/api/v1/sanctions?q=Huawei` | `SanctionsScreen` | Trade.gov Consolidated Screening List snapshot |
-| GET | `/api/v1/macro` | `{items: [MacroSeries]}` | FRED commodity prices + NY Fed GSCPI |
+| GET | `/api/v1/macro` | `{items: [MacroSeries]}` | World Bank Pink Sheet commodity prices + NY Fed GSCPI |
 | GET | `/api/v1/stress/{ticker}?taiwan=&china_export=&hormuz=&malacca=&horizon=` | `{stress: StressResult, metrics: [Metric]}` | Fast path for sliders (no LLM) |
 | GET | `/api/v1/analyze?ticker=NVDA&taiwan=0.7&china_export=0.5&hormuz=0.2&malacca=0.2&horizon=2027&question=...` | `text/event-stream` | Full multi-agent run (see below) |
 | POST | `/api/v1/memo.pdf` | `application/pdf` | Body: an `AnalysisResult` JSON |

@@ -200,7 +200,7 @@ def test_macro_snapshot_schema_and_contents():
     assert len(items) == 6
 
     ids = [item["id"] for item in items]
-    expected_ids = ["PCOPPUSDM", "PALUMUSDM", "PNICKUSDM", "DCOILBRENTEU", "PNGASEUUSDM", "GSCPI"]
+    expected_ids = ["WB_BRENT", "WB_NGAS_EUR", "WB_COPPER", "WB_ALUMINUM", "WB_NICKEL", "GSCPI"]
     for eid in expected_ids:
         assert eid in ids
 
@@ -223,7 +223,7 @@ def test_macro_source_module():
     assert gscpi.latest_date >= "2026-01-01"
 
     # Verify Copper
-    copper = by_id["PCOPPUSDM"]
+    copper = by_id["WB_COPPER"]
     assert copper.unit == "USD/mt"
     assert copper.latest_value > 5000.0
 
@@ -295,3 +295,11 @@ def test_comtrade_partner_490_is_taiwan():
     m = ct._get_partner_map() if hasattr(ct, "_get_partner_map") else {}
     if m:  # network or cached reference file available
         assert "Taiwan" in m.get(490, "")
+
+
+def test_macro_has_no_fred_content():
+    """FRED terms forbid storing its content; commodity prices come from the World Bank Pink Sheet."""
+    d = json.loads(MACRO_JSON_PATH.read_text(encoding="utf-8"))
+    for item in d["items"]:
+        assert item["provenance"]["source"] in ("worldbank_cmo", "nyfed_gscpi"), item["id"]
+        assert "fred" not in item["provenance"]["url"].lower()

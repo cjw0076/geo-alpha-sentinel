@@ -13,7 +13,7 @@
 | **IMF PortWatch Daily Chokepoints** | 국제통화기금 (IMF) & 옥스퍼드대 | 실시간 REST API (TTL 6h) | 2026-10-11 | Attribution (Free to use with attribution) | 28개 병목 해협 메타데이터 매핑, 500일 일별 통항량 페이지네이션, 7일 평균 및 365일 베이스라인 산출, Z-score 및 Delta % 계산 |
 | **USGS MCS 2026** | 미국 지질조사국 (USGS) | 공식 PDF 스냅샷 (`etl/`) | 2026-01-30 (MCS 2026) | Public Domain (U.S. Government work) | 20개 핵심 광물 PDF 레이아웃 파싱 (`pdftotext`), 2025e 국가별 생산량 및 점유율 계산, HHI(0-10,000) 산출, 미국 순수입의존도(NIR) 추출 |
 | **Trade.gov CSL** | 미국 상무부 (ITA) | 압축 스냅샷 (`.json.gz`) | 2026-10-19 | Public Domain (U.S. Government work) | Entity만 선별 (선박 제외), 16,618건 기업 정제, 법인 접미사 13종 제거 토큰 정규화, 역색인 및 SequenceMatcher <130ms 검색 |
-| **FRED Commodity Prices** | 세인트루이스 연준 (FRED) & IMF | 실시간 CSV (TTL 24h) + 스냅샷 | 2026-10-14 | Public Domain / IMF Primary Commodity Prices | 구리, 알루미늄, 니켈, 천연가스 월별 시계열 추출, 일별 브렌트유(`DCOILBRENTEU`) 월말 평균 리샘플링, 60개월 12M YoY % 산출 |
+| **World Bank Commodity Prices (Pink Sheet)** | 세계은행 (World Bank Prospects Group) | 월간 엑셀 (주 1회 캐시) + 스냅샷 | 2026-10-31 (기준월 2026-09) | CC BY 4.0 (출처 표기) | 'Monthly Prices' 시트에서 브렌트유·유럽 천연가스·구리·알루미늄·니켈 월평균가 추출, 기간 `YYYYMmm` → 월말일 변환, 60개월 보존, 12M YoY % 산출 |
 | **NY Fed GSCPI** | 뉴욕 연방준비은행 | 공식 엑셀 스냅샷 | 2026-09-30 | Attribution (Free use with attribution) | 글로벌 공급망 압력지수 345개월 시계열 파싱, 60개월 윈도우 보존, 12M YoY % 산출 |
 | **UN Comtrade** | 유엔 통계국 (UNSD) | 실시간 미리보기 API (TTL 7d) | 2024 / 2023 | Non-commercial with attribution | 미국(842) 대상 9대 전략품목(반도체, 배터리, 자석, 구리 등) 수입액 집계, 월드(0) 분리, 상위 10개국 점유율 및 수입 HHI 계산 |
 | **SEC EDGAR** | 미국 증권거래위원회 (SEC) | 실시간 REST API (Live) | 실시간 (FY2025/26) | Public Domain (U.S. Government work) | CIK 매핑, Company Facts XBRL 재무제표(매출, 영업이익, CFO, Capex) 추출, 10-K Item 1A 위험요인 텍스트 프래그먼트 링크 생성 |
@@ -99,25 +99,25 @@ The Consolidated Screening List (CSL) is a unified system maintained by the Inte
 
 ---
 
-## 4. St. Louis Fed FRED Macroeconomic Time Series
+## 4. World Bank Commodity Price Data (The Pink Sheet)
 
 ### Overview & Description
-Federal Reserve Economic Data (FRED) is an online database maintained by the Research Division of the Federal Reserve Bank of St. Louis, providing historical commodity benchmark series sourced from the International Monetary Fund (IMF Primary Commodity Price System).
+The World Bank Prospects Group publishes monthly benchmark commodity prices in nominal US dollars ("The Pink Sheet"). It replaces the FRED feed used earlier: FRED's terms prohibit storing, caching or archiving FRED content, while the Pink Sheet is licensed CC BY 4.0, which permits storage and redistribution with attribution.
 
-- **Primary Source URL**: https://fred.stlouisfed.org/
+- **Primary Source URL**: https://www.worldbank.org/en/research/commodity-markets (file `CMO-Historical-Data-Monthly.xlsx`, sheet `Monthly Prices`)
 - **Series Monitored**:
-  - `PCOPPUSDM`: Global Price of Copper (USD/metric ton, monthly)
-  - `PALUMUSDM`: Global Price of Aluminum (USD/metric ton, monthly)
-  - `PNICKUSDM`: Global Price of Nickel (USD/metric ton, monthly)
-  - `DCOILBRENTEU`: Crude Oil Prices: Brent - Europe (USD/barrel, daily)
-  - `PNGASEUUSDM`: Global Price of Natural Gas, EU (USD/MMBtu, monthly)
-- **Collection Method**: Live CSV queries via `sentinel/http.py` with 24-hour cache TTL; automated fallback to `data/macro.json`.
-- **License**: Public domain / IMF Primary Commodity Prices via FRED.
+  - `WB_BRENT`: Crude oil, Brent (USD/bbl)
+  - `WB_NGAS_EUR`: Natural gas, Europe (USD/MMBtu)
+  - `WB_COPPER`: Copper (USD/mt)
+  - `WB_ALUMINUM`: Aluminum (USD/mt)
+  - `WB_NICKEL`: Nickel (USD/mt)
+- **Collection Method**: `sentinel/sources/macro.py` reads the workbook with a 7-day cache and falls back to `data/macro.json`.
+- **License / attribution**: CC BY 4.0 — "World Bank Commodity Price Data (The Pink Sheet)".
 - **Preprocessing Pipeline**:
-  1. Fetches raw time series via automated CSV endpoints.
-  2. Resamples daily Brent series into month-end arithmetic means.
-  3. Retains rolling 60-month historical observations.
-  4. Calculates 12-month trailing year-over-year percentage change: $\text{YoY} = \left(\frac{V_t}{V_{t-12}} - 1.0\right) \times 100$.
+  1. Locates the header row in `Monthly Prices` and the five columns by name.
+  2. Converts the period label `YYYYMmm` to the month-end date.
+  3. Retains the latest 60 monthly observations.
+  4. Calculates 12-month year-over-year change: $\text{YoY} = \left(\frac{V_t}{V_{t-12}} - 1.0\right) \times 100$.
 - **Refresh Command**:
   ```bash
   python3 etl/build_macro.py

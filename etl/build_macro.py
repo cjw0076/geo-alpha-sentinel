@@ -1,22 +1,18 @@
-"""ETL pipeline: downloads and builds macro series snapshot from FRED and NY Fed GSCPI.
+"""ETL pipeline: builds the macro snapshot from the World Bank Pink Sheet (CC BY 4.0) and NY Fed GSCPI.
 
 Output: data/macro.json
 """
 
 from __future__ import annotations
 
-import csv
-import io
 import json
 import subprocess
 import sys
 import tempfile
-from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-import numpy as np
 
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
@@ -26,87 +22,13 @@ import openpyxl
 
 from sentinel.http import fetch_bytes, utcnow_iso
 from sentinel.models import MacroSeries, Provenance
+from sentinel.sources.macro import pink_sheet_series
 
 DATA_DIR = ROOT / "data"
-
-FRED_SERIES_CONFIG = [
-    {
-        "id": "PCOPPUSDM",
-        "name": "Global Price of Copper",
-        "unit": "USD/mt",
-        "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=PCOPPUSDM",
-        "monthly": True,
-    },
-    {
-        "id": "PALUMUSDM",
-        "name": "Global Price of Aluminum",
-        "unit": "USD/mt",
-        "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=PALUMUSDM",
-        "monthly": True,
-    },
-    {
-        "id": "PNICKUSDM",
-        "name": "Global Price of Nickel",
-        "unit": "USD/mt",
-        "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=PNICKUSDM",
-        "monthly": True,
-    },
-    {
-        "id": "DCOILBRENTEU",
-        "name": "Crude Oil Prices: Brent - Europe",
-        "unit": "USD/bbl",
-        "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DCOILBRENTEU",
-        "monthly": False,  # Daily, needs resampling to month-end mean
-    },
-    {
-        "id": "PNGASEUUSDM",
-        "name": "Global Price of Natural Gas, EU",
-        "unit": "USD/MMBtu",
-        "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=PNGASEUUSDM",
-        "monthly": True,
-    },
-]
 
 GSCPI_URL = (
     "https://www.newyorkfed.org/medialibrary/research/interactives/gscpi/downloads/gscpi_data.xlsx"
 )
-
-
-def parse_fred_csv(csv_bytes: bytes, monthly: bool) -> List[Dict[str, Any]]:
-    reader = csv.reader(io.StringIO(csv_bytes.decode("utf-8", errors="replace")))
-    header = next(reader, None)
-    if not header:
-        return []
-
-    if monthly:
-        points: List[Dict[str, Any]] = []
-        for row in reader:
-            if len(row) >= 2 and row[1].strip() not in (".", "", "NA"):
-                try:
-                    d, val = row[0].strip(), float(row[1].strip())
-                    points.append({"date": d, "value": round(val, 2)})
-                except ValueError:
-                    pass
-        return points
-    else:
-        # Daily series: resample to month-end mean
-        by_month: Dict[str, List[Tuple[str, float]]] = defaultdict(list)
-        for row in reader:
-            if len(row) >= 2 and row[1].strip() not in (".", "", "NA"):
-                try:
-                    d, val = row[0].strip(), float(row[1].strip())
-                    ym = d[:7]
-                    by_month[ym].append((d, val))
-                except ValueError:
-                    pass
-
-        resampled: List[Dict[str, Any]] = []
-        for ym in sorted(by_month.keys()):
-            pts = by_month[ym]
-            last_date = pts[-1][0]
-            mean_val = float(np.mean([p[1] for p in pts]))
-            resampled.append({"date": last_date, "value": round(mean_val, 2)})
-        return resampled
 
 
 def parse_gscpi() -> List[Dict[str, Any]]:
@@ -155,38 +77,8 @@ def compute_yoy(pts_60m: List[Dict[str, Any]]) -> Optional[float]:
 def build_macro() -> Dict[str, Any]:
     series_list: List[MacroSeries] = []
 
-    # 1. Fetch FRED series
-    for cfg in FRED_SERIES_CONFIG:
-        csv_bytes, retrieved_at = fetch_bytes(cfg["url"], ttl=24 * 3600)
-        pts = parse_fred_csv(csv_bytes, cfg["monthly"])
-        pts_60m = pts[-60:] if len(pts) >= 60 else pts
-        if not pts_60m:
-            continue
-
-        latest = pts_60m[-1]
-        yoy = compute_yoy(pts_60m)
-
-        prov = Provenance(
-            source="fred",
-            title=f"FRED — {cfg['name']} ({cfg['id']})",
-            url=cfg["url"],
-            retrieved_at=retrieved_at,
-            license="Public domain/IMF Primary Commodity Prices via FRED",
-            locator=cfg["id"],
-        )
-
-        series_list.append(
-            MacroSeries(
-                id=cfg["id"],
-                name=cfg["name"],
-                unit=cfg["unit"],
-                latest_date=latest["date"],
-                latest_value=latest["value"],
-                yoy_pct=yoy,
-                series=pts_60m,
-                provenance=prov,
-            )
-        )
+    # 1. World Bank Pink Sheet commodity prices (monthly)
+    series_list.extend(pink_sheet_series(ttl=86400))
 
     # 2. Fetch GSCPI
     gscpi_pts = parse_gscpi()

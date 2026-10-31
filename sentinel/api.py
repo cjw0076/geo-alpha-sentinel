@@ -92,7 +92,7 @@ def health() -> Dict[str, Any]:
         "version": VERSION,
         "llm": {"enabled": llm.enabled(), "model": llm.MAIN if llm.enabled() else None, "fast_model": llm.FAST if llm.enabled() else None},
         "sources": {
-            "sec_edgar": "live", "imf_portwatch": "live", "un_comtrade": "live (public preview)", "fred": "live + snapshot",
+            "sec_edgar": "live", "imf_portwatch": "live", "un_comtrade": "live (public preview)", "worldbank_cmo": "monthly (weekly cache) + snapshot",
             "usgs_mcs": "snapshot", "trade_csl": "snapshot", "nyfed_gscpi": "snapshot",
         },
         "data_files": data_files,

@@ -583,7 +583,7 @@ export function createSnapshotApi({ snapshotBase = './snapshots', fetchImpl = gl
         scenario: clone(idx.scenario),
         coverage: (idx.items || []).length,
         sources: {
-          sec_edgar: 'snapshot', imf_portwatch: 'live (browser) + snapshot', un_comtrade: 'snapshot', fred: 'snapshot',
+          sec_edgar: 'snapshot', imf_portwatch: 'live (browser) + snapshot', un_comtrade: 'snapshot', worldbank_cmo: 'snapshot',
           usgs_mcs: 'snapshot', trade_csl: 'snapshot', nyfed_gscpi: 'snapshot',
         },
       };
