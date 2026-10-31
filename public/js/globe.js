@@ -1,14 +1,98 @@
-const hubs={Taiwan:[25.03,121.56],China:[31.23,121.47],Korea:[37.56,126.98],Japan:[35.67,139.65],Europe:[50.11,8.68],India:[19.08,72.88],Vietnam:[10.82,106.63],Singapore:[1.29,103.85],Malaysia:[3.14,101.69],Mexico:[19.43,-99.13],UnitedStates:[37.4,-122],US:[37.4,-122]};
-const pos=(lat,lon,r)=>{const phi=(90-lat)*Math.PI/180,theta=(lon+180)*Math.PI/180;return [-r*Math.sin(phi)*Math.cos(theta),r*Math.cos(phi),r*Math.sin(phi)*Math.sin(theta)]};
+import {greatCircle,laneGraph,localCorridor,relevantRouteWeights} from './lanes.js';
+
+const SCALE=4, R=1.495, rad=Math.PI/180;
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-function fallback(host,state){const cps=state.chokepoints?.items||state.chokepoints||[];const geos=state.exposure?.geographies||[];let dots=cps.map(c=>{const x=(c.lon+180)/360*640,y=(90-c.lat)/180*320,col=c.delta_pct<=-10?'#ff4d5e':c.delta_pct>=10?'#2ee6a6':'#ff9f1c';return `<circle cx="${x}" cy="${y}" r="${Math.max(2,Math.min(6,(c.latest?.n_total||0)/50))}" fill="${col}"><title>${esc(c.name)} · ${c.latest?.n_total??'—'} · ${c.delta_pct??'—'}%</title></circle>`}).join('');let lines='';for(let lat=-60;lat<=60;lat+=30)lines+=`<line x1="0" y1="${(90-lat)/180*320}" x2="640" y2="${(90-lat)/180*320}" stroke="#263440"/>`;for(let lon=-150;lon<=150;lon+=30)lines+=`<line x1="${(lon+180)/360*640}" y1="0" x2="${(lon+180)/360*640}" y2="320" stroke="#263440"/>`;host.innerHTML=`<svg viewBox="0 0 640 320" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Chokepoints map"><rect width="640" height="320" fill="#061017"/>${lines}${geos.map(g=>{const p=hubs[g.region];return p?`<circle cx="${(p[1]+180)/360*640}" cy="${(90-p[0])/180*320}" r="4" fill="#4da3ff"><title>${esc(g.region)} · ${g.mentions} filing mentions</title></circle>`:''}).join('')}${dots}</svg><span class="globe-credit">SVG GEO FALLBACK · IMF PORTWATCH AIS</span>`;return {resize(){},destroy(){host.innerHTML=''}}}
-export async function mountGlobe(host,state){if(!window.WebGLRenderingContext)return fallback(host,state);let THREE,OrbitControls;try{[THREE,{OrbitControls}]=await Promise.all([import('three'),import('three/addons/controls/OrbitControls.js')])}catch{return fallback(host,state)}
- const width=Math.max(100,host.clientWidth),height=Math.max(260,host.clientHeight);let renderer;try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:false})}catch{return fallback(host,state)}renderer.setPixelRatio(Math.min(2,devicePixelRatio));renderer.setSize(width,height);renderer.setClearColor(0x030609);host.innerHTML='';host.appendChild(renderer.domElement);const tip=document.createElement('div');tip.className='globe-tooltip';tip.hidden=true;host.appendChild(tip);const credit=document.createElement('div');credit.className='globe-credit';credit.textContent='IMF PORTWATCH AIS · SEC EXPOSURE';host.appendChild(credit);
- const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(38,width/height,.1,100);camera.position.set(0,0,4.7);const controls=new OrbitControls(camera,renderer.domElement);controls.enablePan=false;controls.enableDamping=true;controls.dampingFactor=.045;controls.minDistance=2.5;controls.maxDistance=8;controls.autoRotate=true;controls.autoRotateSpeed=.35;const earthGroup=new THREE.Group();scene.add(earthGroup);
- const earthMaterial=new THREE.MeshPhongMaterial({color:0x1d3443,shininess:4,emissive:0x061018});const sphere=new THREE.Mesh(new THREE.SphereGeometry(1.48,48,32),earthMaterial);earthGroup.add(sphere);new THREE.TextureLoader().load('https://cdn.jsdelivr.net/npm/three-globe@2.31.0/example/img/earth-night.jpg',texture=>{texture.colorSpace=THREE.SRGBColorSpace;earthMaterial.map=texture;earthMaterial.color.set(0xffffff);earthMaterial.needsUpdate=true},undefined,()=>{earthMaterial.color.set(0x173347)});
- const gridMat=new THREE.LineBasicMaterial({color:0x2b5161,transparent:true,opacity:.35});for(let lat=-60;lat<=60;lat+=30){const pts=[];for(let lon=-180;lon<=180;lon+=5)pts.push(new THREE.Vector3(...pos(lat,lon,1.486)));earthGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),gridMat))}for(let lon=-180;lon<180;lon+=30){const pts=[];for(let lat=-90;lat<=90;lat+=5)pts.push(new THREE.Vector3(...pos(lat,lon,1.486)));earthGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),gridMat))}
- const atmosphere=new THREE.Mesh(new THREE.SphereGeometry(1.57,40,32),new THREE.ShaderMaterial({transparent:true,side:THREE.BackSide,depthWrite:false,vertexShader:'varying vec3 vNormal; void main(){vNormal=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',fragmentShader:'varying vec3 vNormal; void main(){float a=pow(0.75-dot(vNormal,vec3(0.,0.,1.)),2.0)*0.21;gl_FragColor=vec4(0.14,0.53,0.73,a);}'}));earthGroup.add(atmosphere);scene.add(new THREE.AmbientLight(0xffffff,.8));const light=new THREE.DirectionalLight(0x91c9ea,1.4);light.position.set(2,2,3);scene.add(light);
- const beacons=[];for(const c of (state.chokepoints?.items||state.chokepoints||[])){if(c.lat==null||c.lon==null)continue;const color=c.delta_pct<=-10?0xff4d5e:c.delta_pct>=10?0x2ee6a6:0xff9f1c;const r=Math.max(.014,Math.min(.055,(c.latest?.n_total||20)/3500));const mesh=new THREE.Mesh(new THREE.SphereGeometry(r,8,8),new THREE.ShaderMaterial({uniforms:{uTime:{value:0},uColor:{value:new THREE.Color(color)}},vertexShader:'void main(){gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',fragmentShader:'uniform float uTime;uniform vec3 uColor;void main(){float p=0.7+0.3*sin(uTime*2.0);gl_FragColor=vec4(uColor*p,1.0);}'}));mesh.position.set(...pos(c.lat,c.lon,1.5));mesh.userData=c;earthGroup.add(mesh);beacons.push(mesh)}
- const geos=state.exposure?.geographies||[];const max=Math.max(1,...geos.map(g=>g.mentions));const home=new THREE.Vector3(...pos(37.4,-122,1.5));for(const g of geos.slice(0,12)){const coord=hubs[g.region];if(!coord)continue;const from=new THREE.Vector3(...pos(...coord,1.5)),mid=from.clone().add(home).multiplyScalar(.5).normalize().multiplyScalar(1.9),curve=new THREE.QuadraticBezierCurve3(from,mid,home);const geo=new THREE.BufferGeometry().setFromPoints(curve.getPoints(36));earthGroup.add(new THREE.Line(geo,new THREE.LineBasicMaterial({color:g.mentions/max>.5?0xff9f1c:0x4da3ff,transparent:true,opacity:.65})));const dot=new THREE.Mesh(new THREE.SphereGeometry(.018,8,8),new THREE.MeshBasicMaterial({color:0x4da3ff}));dot.position.copy(from);earthGroup.add(dot)}
- const raycaster=new THREE.Raycaster(),mouse=new THREE.Vector2();renderer.domElement.addEventListener('pointermove',e=>{const box=renderer.domElement.getBoundingClientRect();mouse.set((e.clientX-box.left)/box.width*2-1,-(e.clientY-box.top)/box.height*2+1);raycaster.setFromCamera(mouse,camera);const hit=raycaster.intersectObjects(beacons)[0];if(hit){const c=hit.object.userData;tip.innerHTML=`${esc(c.name)}<br>${c.latest?.n_total??'—'} TRANSITS · ${c.delta_pct??'—'}%`;tip.style.left=`${e.clientX-box.left+12}px`;tip.style.top=`${e.clientY-box.top+8}px`;tip.hidden=false}else tip.hidden=true});renderer.domElement.addEventListener('pointerleave',()=>tip.hidden=true);
- let visible=true,closed=false,frame=0;const observer=new IntersectionObserver(entries=>{visible=entries[0]?.isIntersecting||false},{threshold:.02});observer.observe(host);function loop(t){if(closed)return;frame=requestAnimationFrame(loop);if(!visible||document.hidden)return;for(const b of beacons)b.material.uniforms.uTime.value=t/1000;controls.update();renderer.render(scene,camera)}frame=requestAnimationFrame(loop);function resize(){if(closed)return;const w=Math.max(100,host.clientWidth),h=Math.max(260,host.clientHeight);camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h)}const ro=new ResizeObserver(resize);ro.observe(host);return {resize,destroy(){closed=true;cancelAnimationFrame(frame);observer.disconnect();ro.disconnect();controls.dispose();renderer.dispose();host.innerHTML=''}}}
+const pos=(lat,lon,r=R)=>{const phi=(90-lat)*rad,theta=(lon+180)*rad;return [-r*Math.sin(phi)*Math.cos(theta),r*Math.cos(phi),r*Math.sin(phi)*Math.sin(theta)];};
+const project=([lat,lon])=>[(lon+180)/360*960,(90-lat)/180*480];
+const count=v=>Number(v)>0?Math.max(1,Math.round(Number(v)/SCALE)):0;
+// Largest absolute shortfall (ships/day lost vs 365-day baseline) among Δ ≤ −25%; else the steepest Δ.
+const anomaly=items=>items.filter(x=>Number(x.baseline_365d)>=10&&Number(x.delta_pct)<=-25).sort((a,b)=>(b.baseline_365d-b.mean_7d)-(a.baseline_365d-a.mean_7d))[0]||items.filter(x=>Number(x.baseline_365d)>=10&&Number.isFinite(Number(x.delta_pct))).sort((a,b)=>a.delta_pct-b.delta_pct)[0]||null;
+function makeData(state){
+  const items=(state.chokepoints?.items||[]).filter(x=>Number.isFinite(Number(x.lat))&&Number.isFinite(Number(x.lon)));
+  const graph=laneGraph(items),byId=new Map(items.map(x=>[x.id,x])),weights=relevantRouteWeights(state.exposure);
+  for(const name of state.exposure?.chokepoints_mentioned||[]){const item=items.find(x=>x.name.toLowerCase()===name.toLowerCase());if(item)weights.set(item.id,Math.max(weights.get(item.id)||0,.15));}
+  const debug=items.map(x=>({id:x.id,live:count(x.mean_7d),ghost:count(x.baseline_365d)}));
+  window.__globeDebug=debug;
+  return {items,graph,byId,weights,debug,focus:anomaly(items)};
+}
+function legend(state){return `Particles ∝ 7-day mean daily transits · ghost trails ∝ 365-day baseline · 1 mark per ${SCALE} ships/day (minimum 1 when positive) · IMF PortWatch (AIS) as of ${esc(state.chokepoints?.as_of||'—')} · routes and motion schematic, not vessel tracks or speed`;}
+function callout(host,point,onChokepoint){if(host.id==='signal-globe'||!point)return;const button=document.createElement('button');button.type='button';button.className='globe-callout';button.innerHTML=`<b>${esc(point.name.toUpperCase())}</b><strong>${Number(point.mean_7d).toFixed(1)} ships/day · ${Number(point.delta_pct)>=0?'+':''}${Number(point.delta_pct).toFixed(1)}%</strong><small>IMF PORTWATCH · SOURCE ↗</small>`;button.onclick=()=>onChokepoint?.(point);host.appendChild(button);}
+function fallback(host,state,data,onChokepoint){
+  const {items,graph,byId,weights,focus}=data,active=weights.size>0;
+  const grid=[];for(let lat=-60;lat<=60;lat+=30){const y=project([lat,0])[1];grid.push(`<line x1="0" y1="${y}" x2="960" y2="${y}"/>`);}for(let lon=-150;lon<=150;lon+=30){const x=project([0,lon])[0];grid.push(`<line x1="${x}" y1="0" x2="${x}" y2="480"/>`);}
+  const laneLines=graph.flatMap(e=>{const path=e.points.flatMap((p,i)=>i?greatCircle(e.points[i-1],p,14).slice(1):[p]);return path.slice(1).map((p,i)=>{const a=project(path[i]),b=project(p);return Math.abs(a[0]-b[0])>480?'':`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"/>`;});}).join('');
+  const dots=items.map(x=>{const [cx,cy]=project([x.lat,x.lon]),alarm=x.delta_pct<=-25,live=count(x.mean_7d),ghost=count(x.baseline_365d),highlight=!active||weights.has(x.id);return `<g data-globe-id="${esc(x.id)}" tabindex="0" role="button" aria-label="${esc(x.name)} ${live} live marks ${ghost} baseline marks"><circle cx="${cx}" cy="${cy}" r="${Math.max(3,Math.min(8,3+Math.sqrt(Math.max(0,Number(x.mean_7d)||0))/3))}" fill="${alarm?'#ff3b3b':highlight?'#ff9f1c':'#6b5b46'}"/><title>${esc(x.name)} · ${Number(x.mean_7d).toFixed(1)}/day · ${Number(x.delta_pct).toFixed(1)}%</title></g>`;}).join('');
+  host.innerHTML=`<svg viewBox="0 0 960 480" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" role="img" aria-label="PortWatch chokepoints on an equirectangular map"><rect width="960" height="480" fill="#060606"/><g stroke="#24201a" stroke-width=".7">${grid.join('')}</g><g stroke="#604320" stroke-width=".8" opacity=".42">${laneLines}</g>${dots}</svg><div class="globe-legend">${legend(state)}</div>`;
+  for(const node of host.querySelectorAll('[data-globe-id]')){const x=byId.get(node.dataset.globeId);node.addEventListener('click',()=>onChokepoint?.(x));node.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onChokepoint?.(x);}});}
+  callout(host,focus,onChokepoint);return {resize(){},destroy(){host.innerHTML=''}};
+}
+
+export async function mountGlobe(host,state,{onChokepoint,focus}={}){
+  const data=makeData(state),{items,graph,byId,weights}=data;
+  if(!window.WebGLRenderingContext)return fallback(host,state,data,onChokepoint);
+  let THREE,OrbitControls;
+  try{[THREE,{OrbitControls}]=await Promise.all([import('three'),import('three/addons/controls/OrbitControls.js')]);}catch{return fallback(host,state,data,onChokepoint);}
+  let renderer;
+  try{renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});}catch{return fallback(host,state,data,onChokepoint);}
+  const width=Math.max(100,host.clientWidth),height=Math.max(220,host.clientHeight);
+  renderer.setPixelRatio(Math.min(1.5,devicePixelRatio));renderer.setSize(width,height);renderer.setClearColor(0x030303);
+  host.innerHTML='';host.appendChild(renderer.domElement);
+  const scene=new THREE.Scene(),earth=new THREE.Group();scene.add(earth);
+  const camera=new THREE.PerspectiveCamera(37,width/height,.1,100),target=focus||data.focus;
+  const cameraDistance=host.id==='signal-globe'?3.4:4.7;
+  camera.position.set(...(target?pos(target.lat,target.lon,cameraDistance):[0,0,cameraDistance]));camera.lookAt(0,0,0);
+  const controls=new OrbitControls(camera,renderer.domElement);controls.enablePan=false;controls.enableDamping=true;controls.dampingFactor=.08;controls.minDistance=2.6;controls.maxDistance=7;controls.autoRotate=false;
+  const sphere=new THREE.Mesh(new THREE.SphereGeometry(1.48,64,48),new THREE.MeshBasicMaterial({color:0x090806}));earth.add(sphere);
+  const black=new THREE.DataTexture(new Uint8Array([0,0,0,255]),1,1);black.needsUpdate=true;
+  const nightMat=new THREE.ShaderMaterial({uniforms:{uMap:{value:black},uLoaded:{value:0}},vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',fragmentShader:'uniform sampler2D uMap;uniform float uLoaded;varying vec2 vUv;void main(){vec3 tex=texture2D(uMap,vUv).rgb;float l=dot(tex,vec3(.24,.68,.08));float city=pow(max(l,0.),.62);vec3 ink=vec3(.026,.021,.014);vec3 gold=vec3(1.,.53,.16)*city*2.3;gl_FragColor=vec4(ink+gold*uLoaded,1.0);}'});
+  const lights=new THREE.Mesh(new THREE.SphereGeometry(1.481,64,48),nightMat);earth.add(lights);
+  const texture=new THREE.TextureLoader();texture.load('https://cdn.jsdelivr.net/npm/three-globe@2.31.0/example/img/earth-night.jpg',map=>{map.colorSpace=THREE.SRGBColorSpace;nightMat.uniforms.uMap.value=map;nightMat.uniforms.uLoaded.value=1;},undefined,()=>{});
+  const gridMat=new THREE.LineBasicMaterial({color:0x4d351a,transparent:true,opacity:.16});
+  for(let lat=-60;lat<=60;lat+=30){const pts=[];for(let lon=-180;lon<=180;lon+=4)pts.push(new THREE.Vector3(...pos(lat,lon,1.485)));earth.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),gridMat));}
+  for(let lon=-180;lon<180;lon+=30){const pts=[];for(let lat=-89;lat<=89;lat+=4)pts.push(new THREE.Vector3(...pos(lat,lon,1.485)));earth.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),gridMat));}
+  const atmosphere=new THREE.Mesh(new THREE.SphereGeometry(1.57,48,32),new THREE.ShaderMaterial({transparent:true,side:THREE.BackSide,depthWrite:false,vertexShader:'varying vec3 vN;void main(){vN=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',fragmentShader:'varying vec3 vN;void main(){float a=pow(max(0.,.68-dot(vN,vec3(0.,0.,1.))),2.)*.20;gl_FragColor=vec4(.76,.39,.09,a);}' }));earth.add(atmosphere);
+
+  // Schematic connecting lines are visually separate from observed PortWatch quantities.
+  const networkVerts=[];
+  for(const e of graph){const route=e.points.flatMap((p,i)=>i?greatCircle(e.points[i-1],p,12).slice(1):[p]);for(let i=1;i<route.length;i++)networkVerts.push(...pos(...route[i-1],1.49),...pos(...route[i],1.49));}
+  const networkGeo=new THREE.BufferGeometry();networkGeo.setAttribute('position',new THREE.Float32BufferAttribute(networkVerts,3));earth.add(new THREE.LineSegments(networkGeo,new THREE.LineBasicMaterial({color:0x91621f,transparent:true,opacity:.12,depthWrite:false})));
+
+  const ghostStrong=[],ghostDim=[],starts=[],ends=[],offsets=[],fades=[],sizes=[];
+  const focused=weights.size>0;
+  for(const x of items){
+    const [a,c,b]=localCorridor(x,graph,byId),live=count(x.mean_7d),ghost=count(x.baseline_365d),isFocus=!focused||weights.has(x.id),bucket=isFocus?ghostStrong:ghostDim;
+    for(let j=0;j<ghost;j++){
+      const shift=(j-(ghost-1)/2)*.033;
+      const route=[a,c,b].map(([lat,lon])=>[Math.max(-89,Math.min(89,lat+shift)),lon+shift*.45]);
+      const samples=[...greatCircle(route[0],route[1],5),...greatCircle(route[1],route[2],5).slice(1)];
+      for(let i=1;i<samples.length;i++)bucket.push(...pos(...samples[i-1],1.506),...pos(...samples[i],1.506));
+    }
+    for(let j=0;j<live;j++){
+      starts.push(...pos(...a,1.516));ends.push(...pos(...b,1.516));offsets.push((j+.5)/live);fades.push(isFocus?1:.17);sizes.push(x.delta_pct<=-25?3.3:2.7);
+    }
+  }
+  const line=(vertices,opacity)=>{if(!vertices.length)return;const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));earth.add(new THREE.LineSegments(g,new THREE.LineBasicMaterial({color:0xc38a36,transparent:true,opacity,depthWrite:false})));};
+  line(ghostStrong,.15);line(ghostDim,.025);
+  const particleGeo=new THREE.BufferGeometry();particleGeo.setAttribute('position',new THREE.Float32BufferAttribute(starts,3));particleGeo.setAttribute('aEnd',new THREE.Float32BufferAttribute(ends,3));particleGeo.setAttribute('aOffset',new THREE.Float32BufferAttribute(offsets,1));particleGeo.setAttribute('aFade',new THREE.Float32BufferAttribute(fades,1));particleGeo.setAttribute('aSize',new THREE.Float32BufferAttribute(sizes,1));
+  const particleMat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:{uTime:{value:0},uPixelRatio:{value:renderer.getPixelRatio()}},vertexShader:`attribute vec3 aEnd;attribute float aOffset;attribute float aFade;attribute float aSize;uniform float uTime;uniform float uPixelRatio;varying float vFade;void main(){float t=fract(uTime*.045+aOffset);vec3 p=normalize(mix(position,aEnd,t))*1.518;vec4 mv=modelViewMatrix*vec4(p,1.0);gl_Position=projectionMatrix*mv;gl_PointSize=aSize*uPixelRatio*(4.5/max(1.5,-mv.z));vFade=aFade;}`,fragmentShader:`varying float vFade;void main(){float d=length(gl_PointCoord-.5);float a=smoothstep(.5,.18,d);gl_FragColor=vec4(1.0,.70,.26,a*vFade);}`});
+  earth.add(new THREE.Points(particleGeo,particleMat));
+
+  const beacons=[],raycaster=new THREE.Raycaster(),mouse=new THREE.Vector2();
+  for(const x of items){const alert=x.delta_pct<=-25,volume=Math.max(0,Number(x.mean_7d)||0),radius=alert?.028:Math.min(.032,.011+Math.sqrt(volume)/1000);const mesh=new THREE.Mesh(new THREE.SphereGeometry(radius,9,8),new THREE.MeshBasicMaterial({color:alert?0xff3b3b:weights.size&&!weights.has(x.id)?0x6b5030:0xffaa37}));mesh.position.set(...pos(x.lat,x.lon,1.525));mesh.userData={point:x,alert};earth.add(mesh);beacons.push(mesh);}
+  const tip=document.createElement('div');tip.className='globe-tooltip';tip.hidden=true;tip.style.position='absolute';host.appendChild(tip);
+  const legendEl=document.createElement('div');legendEl.className='globe-legend';legendEl.textContent=legend(state);host.appendChild(legendEl);
+  callout(host,data.focus,onChokepoint);
+  function hitAt(e){const rect=renderer.domElement.getBoundingClientRect();mouse.set((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1);raycaster.setFromCamera(mouse,camera);return raycaster.intersectObjects(beacons)[0]?.object?.userData?.point||null;}
+  renderer.domElement.addEventListener('pointermove',e=>{const x=hitAt(e);if(!x){tip.hidden=true;return;}const box=renderer.domElement.getBoundingClientRect();tip.innerHTML=`${esc(x.name)}<br>${Number(x.mean_7d).toFixed(1)} ships/day · ${Number(x.delta_pct).toFixed(1)}%`;tip.style.left=`${e.clientX-box.left+10}px`;tip.style.top=`${e.clientY-box.top+10}px`;tip.hidden=false;});
+  renderer.domElement.addEventListener('pointerleave',()=>tip.hidden=true);
+  renderer.domElement.addEventListener('click',e=>{const x=hitAt(e);if(x)onChokepoint?.(x);});
+  let closed=false,visible=true,frame=0;
+  function paint(t){frame=0;if(closed||!visible||document.hidden)return;particleMat.uniforms.uTime.value=t/1000;for(const b of beacons)if(b.userData.alert)b.scale.setScalar(1+.25*Math.sin(t/500));controls.update();renderer.render(scene,camera);frame=requestAnimationFrame(paint);}
+  function start(){if(!frame&&!closed&&visible&&!document.hidden)frame=requestAnimationFrame(paint);}
+  function stop(){if(frame)cancelAnimationFrame(frame);frame=0;}
+  const observer=new IntersectionObserver(entries=>{visible=Boolean(entries[0]?.isIntersecting);if(visible)start();else stop();},{threshold:.02});observer.observe(host);
+  const visibility=()=>{if(document.hidden)stop();else start();};document.addEventListener('visibilitychange',visibility);
+  function resize(){if(closed)return;const w=Math.max(100,host.clientWidth),h=Math.max(220,host.clientHeight);camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h);}
+  const ro=new ResizeObserver(resize);ro.observe(host);start();
+  return {resize,destroy(){closed=true;stop();observer.disconnect();ro.disconnect();document.removeEventListener('visibilitychange',visibility);controls.dispose();renderer.dispose();host.innerHTML='';}};
+}

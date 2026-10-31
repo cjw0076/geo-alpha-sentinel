@@ -29,6 +29,9 @@ jobs:
           SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT || 'GeoAlphaSentinel admin@geoalphasentinel.org' }}
           AI_GATEWAY_API_KEY: ${{ secrets.AI_GATEWAY_API_KEY }}
         run: python etl/build_snapshots.py || echo "::warning::snapshot refresh failed; publishing committed snapshots"
+      # Static hosts have no engine: answer the health probe so the client settles on SNAPSHOT
+      # mode without a 404. Written only here so it never shadows the live /api route elsewhere.
+      - run: mkdir -p public/api/v1 && echo '{"status":"snapshot"}' > public/api/v1/health
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

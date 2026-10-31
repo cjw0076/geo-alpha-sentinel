@@ -4,27 +4,28 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#000000">
-  <title>Geo-Alpha Sentinel · KIC</title>
-  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <title>Geo-Alpha Sentinel · Physical risk intelligence</title>
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/terminal.css">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;600&family=IBM+Plex+Serif:wght@400;600&family=Noto+Serif+KR:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/terminal.css">
+  <link rel="stylesheet" href="./css/visual-system.css">
   <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
 </head>
 <body>
   <header id="topbar" class="topbar">
-    <div class="brand">GEO-ALPHA SENTINEL <b>KIC</b></div>
-    <div class="command-wrap"><span class="command-glyph">›</span><input id="command" autocomplete="off" spellcheck="false" aria-label="Terminal command" placeholder="TICKER &lt;GO&gt;  e.g. NVDA RISK · TSM 4W · CHKP · HELP"><span class="command-caret">▌</span><div id="suggestions" class="suggestions" hidden></div></div>
+    <div class="brand"><img src="./assets/logo.svg" alt="" width="24" height="24"><span>GEO-ALPHA SENTINEL</span></div>
+    <div class="command-wrap"><span class="command-glyph">›</span><input id="command" autocomplete="off" spellcheck="false" aria-label="Terminal command" placeholder="TYPE A TICKER &lt;GO&gt; · NVDA RISK · SCRN"><span class="command-caret">▌</span><div id="suggestions" class="suggestions" hidden></div></div>
     <div class="top-meta"><span id="mode-badge" class="mode-badge" hidden>MOCK</span><span id="engine"><i class="led"></i>ENGINE: CONNECTING</span><span id="clocks"></span></div>
   </header>
   <div id="status" class="status" hidden></div>
   <div class="app-shell">
     <nav id="rail" class="rail" aria-label="Functions"></nav>
-    <main id="main"><div id="welcome" class="welcome"><strong>GEO-ALPHA SENTINEL</strong><span>Physical chokepoint intelligence for public markets · 실물 병목과 기업 실적을 잇는 분석 터미널</span><span>Type a ticker, then &lt;GO&gt;</span><div id="chips"></div></div><div id="grid" class="grid"></div></main>
+    <main id="main"><div id="landing" class="landing"><section class="signal-band"><div id="signal-globe" class="signal-globe"></div><div class="signal-copy"><p class="signal-label">GLOBAL SIGNAL <span>세계 신호</span></p><h1 id="signal-headline">IMF PortWatch 신호를 불러오는 중</h1><p id="signal-english"></p><button id="signal-source" class="signal-source" type="button">IMF PORTWATCH ↗</button><p class="signal-legend">Particles ∝ 7-day mean daily transits · ghost trails ∝ 365-day baseline · 1 mark per 4 ships/day · routes and motion schematic · IMF PortWatch (AIS) <span id="signal-date"></span></p></div></section><div class="landing-command">TYPE A TICKER &lt;GO&gt; <span>종목을 입력하거나 아래 종목을 선택하세요</span></div><section id="landing-screener" class="landing-screener"></section></div><div id="welcome" class="welcome" hidden><strong>GEO-ALPHA SENTINEL</strong><span>Physical chokepoint intelligence for public markets · 실물 병목과 기업 실적을 잇는 분석 터미널</span><div id="chips"></div></div><div id="grid" class="grid" hidden></div></main>
   </div>
   <div id="ticker" class="ticker"><div id="ticker-content" class="ticker-content">GEO-ALPHA SENTINEL · IMF PORTWATCH AIS LINK INITIALIZING</div></div>
   <div id="drawer-scrim" class="drawer-scrim" hidden></div><aside id="drawer" class="drawer" aria-label="Evidence details" aria-hidden="true"><header><span>EVIDENCE LEDGER</span><button id="drawer-close" aria-label="Close evidence">✕</button></header><div id="drawer-content"></div></aside>
-  <script type="module" src="/js/app.js"></script>
+  <script type="module" src="./js/app.js"></script>
 </body>
 </html>

@@ -11,3 +11,6 @@ node_modules/
 *.log
 .DS_Store
 collab/
+
+# written by the Pages workflow only (would shadow the live /api route)
+public/api/
