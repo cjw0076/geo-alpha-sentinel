@@ -27,7 +27,8 @@ function fallback(host,state,data,onChokepoint){
   callout(host,focus,onChokepoint);return {resize(){},destroy(){host.innerHTML=''}};
 }
 
-export async function mountGlobe(host,state,{onChokepoint,focus}={}){
+// `still` (reduced motion): draw single frames on demand instead of the animation loop.
+export async function mountGlobe(host,state,{onChokepoint,focus,still=false}={}){
   const data=makeData(state),{items,graph,byId,weights}=data;
   if(!window.WebGLRenderingContext)return fallback(host,state,data,onChokepoint);
   let THREE,OrbitControls;
@@ -46,7 +47,7 @@ export async function mountGlobe(host,state,{onChokepoint,focus}={}){
   const black=new THREE.DataTexture(new Uint8Array([0,0,0,255]),1,1);black.needsUpdate=true;
   const nightMat=new THREE.ShaderMaterial({uniforms:{uMap:{value:black},uLoaded:{value:0}},vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',fragmentShader:'uniform sampler2D uMap;uniform float uLoaded;varying vec2 vUv;void main(){vec3 tex=texture2D(uMap,vUv).rgb;float l=dot(tex,vec3(.24,.68,.08));float city=pow(max(l,0.),.62);vec3 ink=vec3(.026,.021,.014);vec3 gold=vec3(1.,.53,.16)*city*2.3;gl_FragColor=vec4(ink+gold*uLoaded,1.0);}'});
   const lights=new THREE.Mesh(new THREE.SphereGeometry(1.481,64,48),nightMat);earth.add(lights);
-  const texture=new THREE.TextureLoader();texture.load('https://cdn.jsdelivr.net/npm/three-globe@2.31.0/example/img/earth-night.jpg',map=>{map.colorSpace=THREE.SRGBColorSpace;nightMat.uniforms.uMap.value=map;nightMat.uniforms.uLoaded.value=1;},undefined,()=>{});
+  const texture=new THREE.TextureLoader();texture.load('https://cdn.jsdelivr.net/npm/three-globe@2.31.0/example/img/earth-night.jpg',map=>{map.colorSpace=THREE.SRGBColorSpace;nightMat.uniforms.uMap.value=map;nightMat.uniforms.uLoaded.value=1;redraw();},undefined,()=>{});
   const gridMat=new THREE.LineBasicMaterial({color:0x4d351a,transparent:true,opacity:.16});
   for(let lat=-60;lat<=60;lat+=30){const pts=[];for(let lon=-180;lon<=180;lon+=4)pts.push(new THREE.Vector3(...pos(lat,lon,1.485)));earth.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),gridMat));}
   for(let lon=-180;lon<180;lon+=30){const pts=[];for(let lat=-89;lat<=89;lat+=4)pts.push(new THREE.Vector3(...pos(lat,lon,1.485)));earth.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),gridMat));}
@@ -87,12 +88,14 @@ export async function mountGlobe(host,state,{onChokepoint,focus}={}){
   renderer.domElement.addEventListener('pointerleave',()=>tip.hidden=true);
   renderer.domElement.addEventListener('click',e=>{const x=hitAt(e);if(x)onChokepoint?.(x);});
   let closed=false,visible=true,frame=0;
-  function paint(t){frame=0;if(closed||!visible||document.hidden)return;particleMat.uniforms.uTime.value=t/1000;for(const b of beacons)if(b.userData.alert)b.scale.setScalar(1+.25*Math.sin(t/500));controls.update();renderer.render(scene,camera);frame=requestAnimationFrame(paint);}
+  function paint(t){frame=0;if(closed||!visible||document.hidden)return;particleMat.uniforms.uTime.value=t/1000;for(const b of beacons)if(b.userData.alert)b.scale.setScalar(1+.25*Math.sin(t/500));controls.update();renderer.render(scene,camera);if(!still)frame=requestAnimationFrame(paint);}
+  function redraw(){if(still&&!closed)renderer.render(scene,camera);}
+  if(still){controls.enableDamping=false;controls.addEventListener('change',redraw);}
   function start(){if(!frame&&!closed&&visible&&!document.hidden)frame=requestAnimationFrame(paint);}
   function stop(){if(frame)cancelAnimationFrame(frame);frame=0;}
   const observer=new IntersectionObserver(entries=>{visible=Boolean(entries[0]?.isIntersecting);if(visible)start();else stop();},{threshold:.02});observer.observe(host);
   const visibility=()=>{if(document.hidden)stop();else start();};document.addEventListener('visibilitychange',visibility);
-  function resize(){if(closed)return;const w=Math.max(100,host.clientWidth),h=Math.max(220,host.clientHeight);camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h);}
+  function resize(){if(closed)return;const w=Math.max(100,host.clientWidth),h=Math.max(220,host.clientHeight);camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h);redraw();}
   const ro=new ResizeObserver(resize);ro.observe(host);start();
   return {resize,destroy(){closed=true;stop();observer.disconnect();ro.disconnect();document.removeEventListener('visibilitychange',visibility);controls.dispose();renderer.dispose();host.innerHTML='';}};
 }

@@ -1,0 +1,1586 @@
+{
+ "methodology_version": "FIXTURE portfolio-1.0",
+ "generated_at": "FIXTURE 2026-10-31T09:00:00Z",
+ "book": {
+  "id": "kic13f",
+  "name_ko": "FIXTURE KIC 미국 상장주식 (13F)",
+  "name_en": "FIXTURE KIC US equities (13F)",
+  "as_of": "FIXTURE 2026-06-30",
+  "filed": "FIXTURE 2026-08-12",
+  "holdings_n": 312,
+  "value_usd": 98400000000,
+  "covered_n": 40,
+  "covered_weight": 0.91,
+  "evidence_id": "E1"
+ },
+ "benchmark": {
+  "name_ko": "FIXTURE ACWI ex Korea 대용",
+  "name_en": "FIXTURE MSCI ACWI ex Korea proxy",
+  "as_of": "FIXTURE 2026-07-31",
+  "covered_n": 500,
+  "covered_weight": 0.64,
+  "evidence_id": "E2"
+ },
+ "scenario": {
+  "taiwan": 0.5,
+  "china_export": 0.5,
+  "hormuz": 0.2,
+  "malacca": 0.2,
+  "horizon": 2027
+ },
+ "channels": [
+  {
+   "id": "taiwan",
+   "label_ko": "FIXTURE 대만 해협·대만 공급",
+   "label_en": "FIXTURE Taiwan Strait & Taiwan supply",
+   "book_pct": 22.04,
+   "bench_pct": 18.82,
+   "active_pp": 3.22,
+   "effective_n": 4.9,
+   "chokepoint_id": "chokepoint11",
+   "top": [
+    {
+     "ticker": "TSM",
+     "name": "FIXTURE TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+     "weight_pct": 8.41,
+     "exposure": 1.0,
+     "contribution_pp": 8.41,
+     "evidence_id": "E5"
+    },
+    {
+     "ticker": "AAPL",
+     "name": "FIXTURE Apple Inc.",
+     "weight_pct": 10.64,
+     "exposure": 0.3127,
+     "contribution_pp": 3.33,
+     "evidence_id": "E6"
+    },
+    {
+     "ticker": "NVDA",
+     "name": "FIXTURE NVIDIA CORP",
+     "weight_pct": 4.75,
+     "exposure": 0.6753,
+     "contribution_pp": 3.21,
+     "evidence_id": "E7"
+    },
+    {
+     "ticker": "AMAT",
+     "name": "FIXTURE APPLIED MATERIALS INC /DE",
+     "weight_pct": 2.38,
+     "exposure": 0.6321,
+     "contribution_pp": 1.5,
+     "evidence_id": "E8"
+    },
+    {
+     "ticker": "ASML",
+     "name": "FIXTURE ASML HOLDING NV",
+     "weight_pct": 1.33,
+     "exposure": 0.8031,
+     "contribution_pp": 1.07,
+     "evidence_id": "E9"
+    },
+    {
+     "ticker": "AVGO",
+     "name": "FIXTURE Broadcom Inc.",
+     "weight_pct": 1.64,
+     "exposure": 0.5831,
+     "contribution_pp": 0.96,
+     "evidence_id": "E10"
+    }
+   ]
+  },
+  {
+   "id": "china_export",
+   "label_ko": "FIXTURE 중국 핵심광물 수출통제",
+   "label_en": "FIXTURE China critical-mineral export controls",
+   "book_pct": 70.27,
+   "bench_pct": 63.95,
+   "active_pp": 6.32,
+   "effective_n": 9.3,
+   "chokepoint_id": null,
+   "top": [
+    {
+     "ticker": "AMZN",
+     "name": "FIXTURE AMAZON COM INC",
+     "weight_pct": 29.61,
+     "exposure": 0.6171,
+     "contribution_pp": 18.27,
+     "evidence_id": "E11"
+    },
+    {
+     "ticker": "AAPL",
+     "name": "FIXTURE Apple Inc.",
+     "weight_pct": 10.64,
+     "exposure": 0.8041,
+     "contribution_pp": 8.56,
+     "evidence_id": "E12"
+    },
+    {
+     "ticker": "TSM",
+     "name": "FIXTURE TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+     "weight_pct": 8.41,
+     "exposure": 0.8935,
+     "contribution_pp": 7.51,
+     "evidence_id": "E13"
+    },
+    {
+     "ticker": "NVDA",
+     "name": "FIXTURE NVIDIA CORP",
+     "weight_pct": 4.75,
+     "exposure": 0.9953,
+     "contribution_pp": 4.73,
+     "evidence_id": "E14"
+    },
+    {
+     "ticker": "GM",
+     "name": "FIXTURE General Motors Co",
+     "weight_pct": 2.84,
+     "exposure": 0.9758,
+     "contribution_pp": 2.77,
+     "evidence_id": "E15"
+    },
+    {
+     "ticker": "AMAT",
+     "name": "FIXTURE APPLIED MATERIALS INC /DE",
+     "weight_pct": 2.38,
+     "exposure": 0.9875,
+     "contribution_pp": 2.35,
+     "evidence_id": "E16"
+    }
+   ]
+  },
+  {
+   "id": "hormuz",
+   "label_ko": "FIXTURE 호르무즈 해협",
+   "label_en": "FIXTURE Strait of Hormuz",
+   "book_pct": 24.34,
+   "bench_pct": 22.99,
+   "active_pp": 1.35,
+   "effective_n": 14.0,
+   "chokepoint_id": "chokepoint6",
+   "top": [
+    {
+     "ticker": "TSM",
+     "name": "FIXTURE TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+     "weight_pct": 8.41,
+     "exposure": 0.3935,
+     "contribution_pp": 3.31,
+     "evidence_id": "E17"
+    },
+    {
+     "ticker": "NVDA",
+     "name": "FIXTURE NVIDIA CORP",
+     "weight_pct": 4.75,
+     "exposure": 0.5831,
+     "contribution_pp": 2.77,
+     "evidence_id": "E18"
+    },
+    {
+     "ticker": "GOOGL",
+     "name": "FIXTURE Alphabet Inc.",
+     "weight_pct": 5.9,
+     "exposure": 0.4302,
+     "contribution_pp": 2.54,
+     "evidence_id": "E19"
+    },
+    {
+     "ticker": "NEE",
+     "name": "FIXTURE NEXTERA ENERGY INC",
+     "weight_pct": 2.18,
+     "exposure": 0.8946,
+     "contribution_pp": 1.95,
+     "evidence_id": "E20"
+    },
+    {
+     "ticker": "AMZN",
+     "name": "FIXTURE AMAZON COM INC",
+     "weight_pct": 29.61,
+     "exposure": 0.0606,
+     "contribution_pp": 1.79,
+     "evidence_id": "E21"
+    },
+    {
+     "ticker": "MSFT",
+     "name": "FIXTURE MICROSOFT CORP",
+     "weight_pct": 3.27,
+     "exposure": 0.5276,
+     "contribution_pp": 1.73,
+     "evidence_id": "E22"
+    }
+   ]
+  },
+  {
+   "id": "malacca",
+   "label_ko": "FIXTURE 말라카 해협",
+   "label_en": "FIXTURE Malacca Strait",
+   "book_pct": 20.81,
+   "bench_pct": 18.27,
+   "active_pp": 2.54,
+   "effective_n": 5.8,
+   "chokepoint_id": "chokepoint5",
+   "top": [
+    {
+     "ticker": "AMZN",
+     "name": "FIXTURE AMAZON COM INC",
+     "weight_pct": 29.61,
+     "exposure": 0.2499,
+     "contribution_pp": 7.4,
+     "evidence_id": "E23"
+    },
+    {
+     "ticker": "NVDA",
+     "name": "FIXTURE NVIDIA CORP",
+     "weight_pct": 4.75,
+     "exposure": 0.5831,
+     "contribution_pp": 2.77,
+     "evidence_id": "E24"
+    },
+    {
+     "ticker": "AAPL",
+     "name": "FIXTURE Apple Inc.",
+     "weight_pct": 10.64,
+     "exposure": 0.2015,
+     "contribution_pp": 2.14,
+     "evidence_id": "E25"
+    },
+    {
+     "ticker": "TSM",
+     "name": "FIXTURE TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+     "weight_pct": 8.41,
+     "exposure": 0.2212,
+     "contribution_pp": 1.86,
+     "evidence_id": "E26"
+    },
+    {
+     "ticker": "AMAT",
+     "name": "FIXTURE APPLIED MATERIALS INC /DE",
+     "weight_pct": 2.38,
+     "exposure": 0.4972,
+     "contribution_pp": 1.18,
+     "evidence_id": "E27"
+    },
+    {
+     "ticker": "GM",
+     "name": "FIXTURE General Motors Co",
+     "weight_pct": 2.84,
+     "exposure": 0.3297,
+     "contribution_pp": 0.94,
+     "evidence_id": "E28"
+    }
+   ]
+  }
+ ],
+ "stress": {
+  "paths": 20000,
+  "seed": 42,
+  "book": {
+   "p05": -14.2,
+   "p50": -3.1,
+   "mean": -4.6,
+   "es95": -18.9,
+   "p_below_20": 0.021
+  },
+  "bench": {
+   "p05": -12.7,
+   "p50": -2.8,
+   "mean": -4.1,
+   "es95": -16.8,
+   "p_below_20": 0.014
+  },
+  "active_p05_pp": -1.5,
+  "evidence_id": "E3"
+ },
+ "actions": [
+  {
+   "ticker": "TSM",
+   "name": "FIXTURE TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "weight_pct": 8.41,
+   "verdict": "REDUCE",
+   "reason_ko": "FIXTURE 대만 해협·대만 공급 노출 1.00 [E29], 하위 5% 현금흐름 충격 -61.2% [E30]",
+   "p05_pct": -61.18,
+   "evidence_ids": [
+    "E29",
+    "E30"
+   ]
+  },
+  {
+   "ticker": "AMZN",
+   "name": "FIXTURE AMAZON COM INC",
+   "weight_pct": 29.61,
+   "verdict": "HEDGE",
+   "reason_ko": "FIXTURE 중국 핵심광물 수출통제 노출 0.62 [E31], 하위 5% 현금흐름 충격 -14.4% [E32]",
+   "p05_pct": -14.39,
+   "evidence_ids": [
+    "E31",
+    "E32"
+   ]
+  },
+  {
+   "ticker": "NVDA",
+   "name": "FIXTURE NVIDIA CORP",
+   "weight_pct": 4.75,
+   "verdict": "HEDGE",
+   "reason_ko": "FIXTURE 중국 핵심광물 수출통제 노출 1.00 [E33], 하위 5% 현금흐름 충격 -39.4% [E34]",
+   "p05_pct": -39.38,
+   "evidence_ids": [
+    "E33",
+    "E34"
+   ]
+  },
+  {
+   "ticker": "AAPL",
+   "name": "FIXTURE Apple Inc.",
+   "weight_pct": 10.64,
+   "verdict": "ACCUMULATE",
+   "reason_ko": "FIXTURE 중국 핵심광물 수출통제 노출 0.80 [E35], 하위 5% 현금흐름 충격 -17.2% [E36]",
+   "p05_pct": -17.24,
+   "evidence_ids": [
+    "E35",
+    "E36"
+   ]
+  },
+  {
+   "ticker": "AMAT",
+   "name": "FIXTURE APPLIED MATERIALS INC /DE",
+   "weight_pct": 2.38,
+   "verdict": "ACCUMULATE",
+   "reason_ko": "FIXTURE 중국 핵심광물 수출통제 노출 0.99 [E37], 하위 5% 현금흐름 충격 -39.5% [E38]",
+   "p05_pct": -39.49,
+   "evidence_ids": [
+    "E37",
+    "E38"
+   ]
+  }
+ ],
+ "verdict_distribution": {
+  "REDUCE": 1,
+  "HEDGE": 17,
+  "HOLD": 7,
+  "ACCUMULATE": 15
+ },
+ "holdings": [
+  {
+   "ticker": "AMZN",
+   "name": "FIXTURE AMAZON COM INC",
+   "weight_pct": 29.61,
+   "bench_weight_pct": 26.16,
+   "verdict": "HEDGE",
+   "chans": {
+    "taiwan": 0.0,
+    "china_export": 0.6171,
+    "hormuz": 0.0606,
+    "malacca": 0.2499
+   },
+   "p05_pct": -14.39
+  },
+  {
+   "ticker": "AAPL",
+   "name": "FIXTURE Apple Inc.",
+   "weight_pct": 10.64,
+   "bench_weight_pct": 12.91,
+   "verdict": "ACCUMULATE",
+   "chans": {
+    "taiwan": 0.3127,
+    "china_export": 0.8041,
+    "hormuz": 0.0606,
+    "malacca": 0.2015
+   },
+   "p05_pct": -17.24
+  },
+  {
+   "ticker": "TSM",
+   "name": "FIXTURE TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "weight_pct": 8.41,
+   "bench_weight_pct": 8.09,
+   "verdict": "REDUCE",
+   "chans": {
+    "taiwan": 1.0,
+    "china_export": 0.8935,
+    "hormuz": 0.3935,
+    "malacca": 0.2212
+   },
+   "p05_pct": -61.18
+  },
+  {
+   "ticker": "GOOGL",
+   "name": "FIXTURE Alphabet Inc.",
+   "weight_pct": 5.9,
+   "bench_weight_pct": 7.25,
+   "verdict": "ACCUMULATE",
+   "chans": {
+    "taiwan": 0.0,
+    "china_export": 0.1306,
+    "hormuz": 0.4302,
+    "malacca": 0.0723
+   },
+   "p05_pct": -3.91
+  },
+  {
+   "ticker": "NVDA",
+   "name": "FIXTURE NVIDIA CORP",
+   "weight_pct": 4.75,
+   "bench_weight_pct": 3.55,
+   "verdict": "HEDGE",
+   "chans": {
+    "taiwan": 0.6753,
+    "china_export": 0.9953,
+    "hormuz": 0.5831,
+    "malacca": 0.5831
+   },
+   "p05_pct": -39.38
+  },
+  {
+   "ticker": "MSFT",
+   "name": "FIXTURE MICROSOFT CORP",
+   "weight_pct": 3.27,
+   "bench_weight_pct": 4.23,
+   "verdict": "ACCUMULATE",
+   "chans": {
+    "taiwan": 0.0,
+    "china_export": 0.3874,
+    "hormuz": 0.5276,
+    "malacca": 0.0124
+   },
+   "p05_pct": -7.77
+  },
+  {
+   "ticker": "GM",
+   "name": "FIXTURE General Motors Co",
+   "weight_pct": 2.84,
+   "bench_weight_pct": 2.06,
+   "verdict": "HOLD",
+   "chans": {
+    "taiwan": 0.0,
+    "china_export": 0.9758,
+    "hormuz": 0.0,
+    "malacca": 0.3297
+   },
+   "p05_pct": -20.0
+  },
+  {
+   "ticker": "META",
+   "name": "FIXTURE Meta Platforms, Inc.",
+   "weight_pct": 2.58,
+   "bench_weight_pct": 2.3,
+   "verdict": "ACCUMULATE",
+   "chans": {
+    "taiwan": 0.0,
+    "china_export": 0.6834,
+    "hormuz": 0.5276,
+    "malacca": 0.2114
+   },
+   "p05_pct": -15.23
+  },
+  {
+   "ticker": "ETN",
+   "name": "FIXTURE Eaton Corp plc",
+   "weight_pct": 2.54,
+   "bench_weight_pct": 1.75,
+   "verdict": "ACCUMULATE",
+   "chans": {
+    "taiwan": 0.0,
+    "china_export": 0.5596,
+    "hormuz": 0.0,
+    "malacca": 0.0
+   },
+   "p05_pct": -12.29
+  },
+  {
+   "ticker": "AMAT",
+   "name": "FIXTURE APPLIED MATERIALS INC /DE",
+   "weight_pct": 2.38,
+   "bench_weight_pct": 3.23,
+   "verdict": "ACCUMULATE",
+   "chans": {
+    "taiwan": 0.6321,
+    "china_export": 0.9875,
+    "hormuz": 0.4302,
+    "malacca": 0.4972
+   },
+   "p05_pct": -39.49
+  },
+  {
+   "ticker": "VRT",
+   "name": "FIXTURE Vertiv Holdings Co",
+   "weight_pct": 2.29,
+   "bench_weight_pct": 1.92,
+   "verdict": "HEDGE",
+   "chans": {
+    "taiwan": 0.0,
+    "china_export": 0.9608,
+    "hormuz": 0.4302,
+    "malacca": 0.0838
+   },
+   "p05_pct": -18.06
+  },
+  {
+   "ticker": "NEE",
+   "name": "FIXTURE NEXTERA ENERGY INC",
+   "weight_pct": 2.18,
+   "bench_weight_pct": 1.48,
+   "verdict": "HEDGE",
+   "chans": {
+    "taiwan": 0.0,
+    "china_export": 0.6015,
+    "hormuz": 0.8946,
+    "malacca": 0.0
+   },
+   "p05_pct": -20.44
+  },
+  {
+   "ticker": "CAT",
+   "name": "FIXTURE CATERPILLAR INC",
+   "weight_pct": 2.1,
+   "bench_weight_pct": 1.6,
+   "verdict": "ACCUMULATE",
+   "chans": {
+    "taiwan": 0.0,
+    "china_export": 0.1647,
+    "hormuz": 0.0606,
+    "malacca": 0.0
+   },
+   "p05_pct": -3.11
+  },
+  {
+   "ticker": "ALB",
+   "name": "FIXTURE ALBEMARLE CORP",
+   "weight_pct": 1.79,
+   "bench_weight_pct": 1.95,
+   "verdict": "HEDGE",
+   "chans": {
+    "taiwan": 0.2212,
+    "china_export": 0.9802,
+    "hormuz": 0.5563,
+    "malacca": 0.3127
+   },
+   "p05_pct": -21.58
+  },
+  {
+   "ticker": "AVGO",
+   "name": "FIXTURE Broadcom Inc.",
+   "weight_pct": 1.64,
+   "bench_weight_pct": 1.27,
+   "verdict": "ACCUMULATE",
+   "chans": {
+    "taiwan": 0.5831,
+    "china_export": 0.9487,
+    "hormuz": 0.1175,
+    "malacca": 0.0952
+   },
+   "p05_pct": -31.73
+  },
+  {
+   "ticker": "ON",
+   "name": "FIXTURE ON SEMICONDUCTOR CORP",
+   "weight_pct": 1.53,
+   "bench_weight_pct": 1.73,
+   "verdict": "ACCUMULATE",
+   "chans": {
+    "taiwan": 0.0,
+    "china_export": 0.8099,
+    "hormuz": 0.0,
+    "malacca": 0.0488
+   },
+   "p05_pct": -16.3
+  },
+  {
+   "ticker": "TSLA",
+   "name": "FIXTURE Tesla, Inc.",
+   "weight_pct": 1.49,
+   "bench_weight_pct": 0.95,
+   "verdict": "HOLD",
+   "chans": {
+    "taiwan": 0.0,
+    "china_export": 0.9146,
+    "hormuz": 0.3935,
+    "malacca": 0.0488
+   },
+   "p05_pct": -16.64
+  },
+  {
+   "ticker": "PWR",
+   "name": "FIXTURE QUANTA SERVICES, INC.",
+   "weight_pct": 1.37,
+   "bench_weight_pct": 0.81,
+   "verdict": "ACCUMULATE",
+   "chans": {
+    "taiwan": 0.0,
+    "china_export": 0.5768,
+    "hormuz": 0.3544,
+    "malacca": 0.0
+   },
+   "p05_pct": -10.4
+  },
+  {
+   "ticker": "ASML",
+   "name": "FIXTURE ASML HOLDING NV",
+   "weight_pct": 1.33,
+   "bench_weight_pct": 1.37,
+   "verdict": "HEDGE",
+   "chans": {
+    "taiwan": 0.8031,
+    "china_export": 0.9128,
+    "hormuz": 0.0,
+    "malacca": 0.1605
+   },
+   "p05_pct": -36.56
+  },
+  {
+   "ticker": "AMD",
+   "name": "FIXTURE ADVANCED MICRO DEVICES INC",
+   "weight_pct": 1.19,
+   "bench_weight_pct": 1.25,
+   "verdict": "HEDGE",
+   "chans": {
+    "taiwan": 0.6753,
+    "china_export": 0.9779,
+    "hormuz": 0.4302,
+    "malacca": 0.401
+   },
+   "p05_pct": -35.71
+  },
+  {
+   "ticker": "NXPI",
+   "name": "FIXTURE NXP Semiconductors N.V.",
+   "weight_pct": 1.18,
+   "bench_weight_pct": 0.7,
+   "verdict": "HEDGE",
+   "chans": {
+    "taiwan": 0.6753,
+    "china_export": 0.9093,
+    "hormuz": 0.3127,
+    "malacca": 0.1064
+   },
+   "p05_pct": -30.24
+  },
+  {
+   "ticker": "GEV",
+   "name": "FIXTURE GE Vernova Inc.",
+   "weight_pct": 0.97,
+   "bench_weight_pct": 0.53,
+   "verdict": "HOLD",
+   "chans": {
+    "taiwan": 0.0,
+    "china_export": 0.6638,
+    "hormuz": 0.3935,
+    "malacca": 0.0124
+   },
+   "p05_pct": -15.11
+  },
+  {
+   "ticker": "MP",
+   "name": "FIXTURE MP Materials Corp. / DE",
+   "weight_pct": 0.65,
+   "bench_weight_pct": 0.39,
+   "verdict": "HEDGE",
+   "chans": {
+    "taiwan": 0.0,
+    "china_export": 0.8738,
+    "hormuz": 0.4302,
+    "malacca": 0.1393
+   },
+   "p05_pct": -15.38
+  },
+  {
+   "ticker": "CEG",
+   "name": "FIXTURE Constellation Energy Corp",
+   "weight_pct": 0.64,
+   "bench_weight_pct": 0.41,
+   "verdict": "ACCUMULATE",
+   "chans": {
+    "taiwan": 0.0,
+    "china_export": 0.5034,
+    "hormuz": 0.6753,
+    "malacca": 0.0
+   },
+   "p05_pct": -11.96
+  },
+  {
+   "ticker": "RTX",
+   "name": "FIXTURE RTX Corp",
+   "weight_pct": 0.61,
+   "bench_weight_pct": 0.35,
+   "verdict": "HOLD",
+   "chans": {
+    "taiwan": 0.3127,
+    "china_export": 0.8474,
+    "hormuz": 0.4302,
+    "malacca": 0.15
+   },
+   "p05_pct": -24.89
+  },
+  {
+   "ticker": "DE",
+   "name": "FIXTURE DEERE & CO",
+   "weight_pct": 0.61,
+   "bench_weight_pct": 0.51,
+   "verdict": "HOLD",
+   "chans": {
+    "taiwan": 0.0,
+    "china_export": 0.6927,
+    "hormuz": 0.1175,
+    "malacca": 0.0606
+   },
+   "p05_pct": -11.25
+  },
+  {
+   "ticker": "LRCX",
+   "name": "FIXTURE LAM RESEARCH CORP",
+   "weight_pct": 0.58,
+   "bench_weight_pct": 0.67,
+   "verdict": "HEDGE",
+   "chans": {
+    "taiwan": 0.3127,
+    "china_export": 0.9813,
+    "hormuz": 0.695,
+    "malacca": 0.3858
+   },
+   "p05_pct": -20.13
+  },
+  {
+   "ticker": "LIN",
+   "name": "FIXTURE LINDE PLC",
+   "weight_pct": 0.57,
+   "bench_weight_pct": 0.37,
+   "verdict": "ACCUMULATE",
+   "chans": {
+    "taiwan": 0.0,
+    "china_export": 0.1131,
+    "hormuz": 0.0606,
+    "malacca": 0.0
+   },
+   "p05_pct": -2.08
+  },
+  {
+   "ticker": "MU",
+   "name": "FIXTURE MICRON TECHNOLOGY INC",
+   "weight_pct": 0.56,
+   "bench_weight_pct": 0.5,
+   "verdict": "HOLD",
+   "chans": {
+    "taiwan": 0.5276,
+    "china_export": 0.9765,
+    "hormuz": 0.2684,
+    "malacca": 0.3935
+   },
+   "p05_pct": -24.33
+  },
+  {
+   "ticker": "QCOM",
+   "name": "FIXTURE QUALCOMM INC/DE",
+   "weight_pct": 0.52,
+   "bench_weight_pct": 0.45,
+   "verdict": "HEDGE",
+   "chans": {
+    "taiwan": 0.6321,
+    "china_export": 0.993,
+    "hormuz": 0.0,
+    "malacca": 0.5779
+   },
+   "p05_pct": -32.61
+  },
+  {
+   "ticker": "NOC",
+   "name": "FIXTURE NORTHROP GRUMMAN CORP /DE/",
+   "weight_pct": 0.51,
+   "bench_weight_pct": 0.66,
+   "verdict": "ACCUMULATE",
+   "chans": {
+    "taiwan": 0.0,
+    "china_export": 0.5768,
+    "hormuz": 0.0606,
+    "malacca": 0.0
+   },
+   "p05_pct": -12.56
+  },
+  {
+   "ticker": "ARM",
+   "name": "FIXTURE ARM HOLDINGS PLC /UK",
+   "weight_pct": 0.46,
+   "bench_weight_pct": 0.61,
+   "verdict": "HEDGE",
+   "chans": {
+    "taiwan": 0.5276,
+    "china_export": 1.0,
+    "hormuz": 0.7769,
+    "malacca": 0.9058
+   },
+   "p05_pct": -30.6
+  },
+  {
+   "ticker": "FCX",
+   "name": "FIXTURE FREEPORT-MCMORAN INC",
+   "weight_pct": 0.38,
+   "bench_weight_pct": 0.23,
+   "verdict": "HEDGE",
+   "chans": {
+    "taiwan": 0.0,
+    "china_export": 0.9102,
+    "hormuz": 0.3544,
+    "malacca": 0.0723
+   },
+   "p05_pct": -20.29
+  },
+  {
+   "ticker": "TXN",
+   "name": "FIXTURE TEXAS INSTRUMENTS INC",
+   "weight_pct": 0.34,
+   "bench_weight_pct": 0.36,
+   "verdict": "HEDGE",
+   "chans": {
+    "taiwan": 0.0,
+    "china_export": 0.7899,
+    "hormuz": 0.0,
+    "malacca": 0.0488
+   },
+   "p05_pct": -18.56
+  },
+  {
+   "ticker": "BA",
+   "name": "FIXTURE BOEING CO",
+   "weight_pct": 0.34,
+   "bench_weight_pct": 0.23,
+   "verdict": "HEDGE",
+   "chans": {
+    "taiwan": 0.0,
+    "china_export": 0.8647,
+    "hormuz": 0.0,
+    "malacca": 0.0952
+   },
+   "p05_pct": -17.36
+  },
+  {
+   "ticker": "INTC",
+   "name": "FIXTURE INTEL CORP",
+   "weight_pct": 0.31,
+   "bench_weight_pct": 0.17,
+   "verdict": "HEDGE",
+   "chans": {
+    "taiwan": 0.5831,
+    "china_export": 0.9455,
+    "hormuz": 0.4972,
+    "malacca": 0.2015
+   },
+   "p05_pct": -26.92
+  },
+  {
+   "ticker": "GE",
+   "name": "FIXTURE GENERAL ELECTRIC CO",
+   "weight_pct": 0.29,
+   "bench_weight_pct": 0.32,
+   "verdict": "ACCUMULATE",
+   "chans": {
+    "taiwan": 0.0,
+    "china_export": 0.7878,
+    "hormuz": 0.0,
+    "malacca": 0.0838
+   },
+   "p05_pct": -13.97
+  },
+  {
+   "ticker": "LMT",
+   "name": "FIXTURE LOCKHEED MARTIN CORP",
+   "weight_pct": 0.28,
+   "bench_weight_pct": 0.24,
+   "verdict": "HOLD",
+   "chans": {
+    "taiwan": 0.2212,
+    "china_export": 0.9146,
+    "hormuz": 0.2212,
+    "malacca": 0.0488
+   },
+   "p05_pct": -23.62
+  },
+  {
+   "ticker": "KLAC",
+   "name": "FIXTURE KLA CORP",
+   "weight_pct": 0.22,
+   "bench_weight_pct": 0.22,
+   "verdict": "HEDGE",
+   "chans": {
+    "taiwan": 0.3935,
+    "china_export": 0.9884,
+    "hormuz": 0.6084,
+    "malacca": 0.3041
+   },
+   "p05_pct": -20.3
+  },
+  {
+   "ticker": "CVX",
+   "name": "FIXTURE CHEVRON CORP",
+   "weight_pct": 0.17,
+   "bench_weight_pct": 0.14,
+   "verdict": "ACCUMULATE",
+   "chans": {
+    "taiwan": 0.0,
+    "china_export": 0.1131,
+    "hormuz": 0.4647,
+    "malacca": 0.0
+   },
+   "p05_pct": -2.43
+  }
+ ],
+ "headline": {
+  "ko": "FIXTURE 호르무즈 해협 통항 −86.8% — KIC 미국 보유분의 24.3%가 이 경로에 노출, 벤치마크 대비 +1.4%p",
+  "en": "FIXTURE Strait of Hormuz transits −86.8% — 24.3% of KIC's US book is exposed to this route, +1.4pp vs benchmark",
+  "evidence_ids": [
+   "E4",
+   "E1",
+   "E2"
+  ]
+ },
+ "evidence": [
+  {
+   "id": "E1",
+   "kind": "number",
+   "label": "FIXTURE KIC US equities (13F) — holdings value",
+   "value": 98400000000,
+   "unit": "FIXTURE USD",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "sec_edgar",
+    "title": "FIXTURE KIC 13F-HR information table",
+    "url": "FIXTURE https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001441689",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE 13F-HR period 2026-06-30"
+   }
+  },
+  {
+   "id": "E2",
+   "kind": "number",
+   "label": "FIXTURE ACWI ex Korea proxy — equity rows",
+   "value": 2310,
+   "unit": "FIXTURE rows",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "sec_edgar",
+    "title": "FIXTURE iShares MSCI ACWI ETF N-PORT-P",
+    "url": "FIXTURE https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001100663",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE NPORT-P 2026-07-31"
+   }
+  },
+  {
+   "id": "E3",
+   "kind": "number",
+   "label": "FIXTURE Joint scenario Monte Carlo — book FCF shock P05",
+   "value": -14.2,
+   "unit": "FIXTURE %",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE PORTFOLIO_STRESS_PROGRAM (seed 42, 20,000 paths)",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#portfolio-lens",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE stress.book.p05"
+   }
+  },
+  {
+   "id": "E4",
+   "kind": "number",
+   "label": "FIXTURE Strait of Hormuz: 7-day mean transits vs 365-day baseline (%)",
+   "value": -86.84,
+   "unit": "FIXTURE %",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "imf_portwatch",
+    "title": "FIXTURE IMF PortWatch Daily Chokepoint Transits — Strait of Hormuz",
+    "url": "FIXTURE https://portwatch.imf.org/pages/chokepoints",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE chokepoint6"
+   }
+  },
+  {
+   "id": "E5",
+   "kind": "number",
+   "label": "FIXTURE Channel exposure taiwan: TSM",
+   "value": 1.0,
+   "unit": "FIXTURE 0-1",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE Channel exposure from filing evidence",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#channel-exposure",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE TSM/taiwan"
+   }
+  },
+  {
+   "id": "E6",
+   "kind": "number",
+   "label": "FIXTURE Channel exposure taiwan: AAPL",
+   "value": 0.3127,
+   "unit": "FIXTURE 0-1",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE Channel exposure from filing evidence",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#channel-exposure",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE AAPL/taiwan"
+   }
+  },
+  {
+   "id": "E7",
+   "kind": "number",
+   "label": "FIXTURE Channel exposure taiwan: NVDA",
+   "value": 0.6753,
+   "unit": "FIXTURE 0-1",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE Channel exposure from filing evidence",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#channel-exposure",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE NVDA/taiwan"
+   }
+  },
+  {
+   "id": "E8",
+   "kind": "number",
+   "label": "FIXTURE Channel exposure taiwan: AMAT",
+   "value": 0.6321,
+   "unit": "FIXTURE 0-1",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE Channel exposure from filing evidence",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#channel-exposure",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE AMAT/taiwan"
+   }
+  },
+  {
+   "id": "E9",
+   "kind": "number",
+   "label": "FIXTURE Channel exposure taiwan: ASML",
+   "value": 0.8031,
+   "unit": "FIXTURE 0-1",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE Channel exposure from filing evidence",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#channel-exposure",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE ASML/taiwan"
+   }
+  },
+  {
+   "id": "E10",
+   "kind": "number",
+   "label": "FIXTURE Channel exposure taiwan: AVGO",
+   "value": 0.5831,
+   "unit": "FIXTURE 0-1",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE Channel exposure from filing evidence",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#channel-exposure",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE AVGO/taiwan"
+   }
+  },
+  {
+   "id": "E11",
+   "kind": "number",
+   "label": "FIXTURE Channel exposure china_export: AMZN",
+   "value": 0.6171,
+   "unit": "FIXTURE 0-1",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE Channel exposure from filing evidence",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#channel-exposure",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE AMZN/china_export"
+   }
+  },
+  {
+   "id": "E12",
+   "kind": "number",
+   "label": "FIXTURE Channel exposure china_export: AAPL",
+   "value": 0.8041,
+   "unit": "FIXTURE 0-1",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE Channel exposure from filing evidence",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#channel-exposure",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE AAPL/china_export"
+   }
+  },
+  {
+   "id": "E13",
+   "kind": "number",
+   "label": "FIXTURE Channel exposure china_export: TSM",
+   "value": 0.8935,
+   "unit": "FIXTURE 0-1",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE Channel exposure from filing evidence",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#channel-exposure",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE TSM/china_export"
+   }
+  },
+  {
+   "id": "E14",
+   "kind": "number",
+   "label": "FIXTURE Channel exposure china_export: NVDA",
+   "value": 0.9953,
+   "unit": "FIXTURE 0-1",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE Channel exposure from filing evidence",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#channel-exposure",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE NVDA/china_export"
+   }
+  },
+  {
+   "id": "E15",
+   "kind": "number",
+   "label": "FIXTURE Channel exposure china_export: GM",
+   "value": 0.9758,
+   "unit": "FIXTURE 0-1",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE Channel exposure from filing evidence",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#channel-exposure",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE GM/china_export"
+   }
+  },
+  {
+   "id": "E16",
+   "kind": "number",
+   "label": "FIXTURE Channel exposure china_export: AMAT",
+   "value": 0.9875,
+   "unit": "FIXTURE 0-1",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE Channel exposure from filing evidence",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#channel-exposure",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE AMAT/china_export"
+   }
+  },
+  {
+   "id": "E17",
+   "kind": "number",
+   "label": "FIXTURE Channel exposure hormuz: TSM",
+   "value": 0.3935,
+   "unit": "FIXTURE 0-1",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE Channel exposure from filing evidence",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#channel-exposure",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE TSM/hormuz"
+   }
+  },
+  {
+   "id": "E18",
+   "kind": "number",
+   "label": "FIXTURE Channel exposure hormuz: NVDA",
+   "value": 0.5831,
+   "unit": "FIXTURE 0-1",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE Channel exposure from filing evidence",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#channel-exposure",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE NVDA/hormuz"
+   }
+  },
+  {
+   "id": "E19",
+   "kind": "number",
+   "label": "FIXTURE Channel exposure hormuz: GOOGL",
+   "value": 0.4302,
+   "unit": "FIXTURE 0-1",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE Channel exposure from filing evidence",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#channel-exposure",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE GOOGL/hormuz"
+   }
+  },
+  {
+   "id": "E20",
+   "kind": "number",
+   "label": "FIXTURE Channel exposure hormuz: NEE",
+   "value": 0.8946,
+   "unit": "FIXTURE 0-1",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE Channel exposure from filing evidence",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#channel-exposure",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE NEE/hormuz"
+   }
+  },
+  {
+   "id": "E21",
+   "kind": "number",
+   "label": "FIXTURE Channel exposure hormuz: AMZN",
+   "value": 0.0606,
+   "unit": "FIXTURE 0-1",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE Channel exposure from filing evidence",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#channel-exposure",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE AMZN/hormuz"
+   }
+  },
+  {
+   "id": "E22",
+   "kind": "number",
+   "label": "FIXTURE Channel exposure hormuz: MSFT",
+   "value": 0.5276,
+   "unit": "FIXTURE 0-1",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE Channel exposure from filing evidence",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#channel-exposure",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE MSFT/hormuz"
+   }
+  },
+  {
+   "id": "E23",
+   "kind": "number",
+   "label": "FIXTURE Channel exposure malacca: AMZN",
+   "value": 0.2499,
+   "unit": "FIXTURE 0-1",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE Channel exposure from filing evidence",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#channel-exposure",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE AMZN/malacca"
+   }
+  },
+  {
+   "id": "E24",
+   "kind": "number",
+   "label": "FIXTURE Channel exposure malacca: NVDA",
+   "value": 0.5831,
+   "unit": "FIXTURE 0-1",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE Channel exposure from filing evidence",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#channel-exposure",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE NVDA/malacca"
+   }
+  },
+  {
+   "id": "E25",
+   "kind": "number",
+   "label": "FIXTURE Channel exposure malacca: AAPL",
+   "value": 0.2015,
+   "unit": "FIXTURE 0-1",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE Channel exposure from filing evidence",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#channel-exposure",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE AAPL/malacca"
+   }
+  },
+  {
+   "id": "E26",
+   "kind": "number",
+   "label": "FIXTURE Channel exposure malacca: TSM",
+   "value": 0.2212,
+   "unit": "FIXTURE 0-1",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE Channel exposure from filing evidence",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#channel-exposure",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE TSM/malacca"
+   }
+  },
+  {
+   "id": "E27",
+   "kind": "number",
+   "label": "FIXTURE Channel exposure malacca: AMAT",
+   "value": 0.4972,
+   "unit": "FIXTURE 0-1",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE Channel exposure from filing evidence",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#channel-exposure",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE AMAT/malacca"
+   }
+  },
+  {
+   "id": "E28",
+   "kind": "number",
+   "label": "FIXTURE Channel exposure malacca: GM",
+   "value": 0.3297,
+   "unit": "FIXTURE 0-1",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE Channel exposure from filing evidence",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#channel-exposure",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE GM/malacca"
+   }
+  },
+  {
+   "id": "E29",
+   "kind": "number",
+   "label": "FIXTURE TSM channel exposure taiwan",
+   "value": 1.0,
+   "unit": "FIXTURE 0-1",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE Channel exposure from filing evidence",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#channel-exposure",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE TSM/taiwan"
+   }
+  },
+  {
+   "id": "E30",
+   "kind": "number",
+   "label": "FIXTURE TSM FCF shock P05 under joint scenario",
+   "value": -61.18,
+   "unit": "FIXTURE %",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE PORTFOLIO_STRESS_PROGRAM issuer shock",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#portfolio-lens",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE TSM/p05"
+   }
+  },
+  {
+   "id": "E31",
+   "kind": "number",
+   "label": "FIXTURE AMZN channel exposure china_export",
+   "value": 0.6171,
+   "unit": "FIXTURE 0-1",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE Channel exposure from filing evidence",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#channel-exposure",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE AMZN/china_export"
+   }
+  },
+  {
+   "id": "E32",
+   "kind": "number",
+   "label": "FIXTURE AMZN FCF shock P05 under joint scenario",
+   "value": -14.39,
+   "unit": "FIXTURE %",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE PORTFOLIO_STRESS_PROGRAM issuer shock",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#portfolio-lens",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE AMZN/p05"
+   }
+  },
+  {
+   "id": "E33",
+   "kind": "number",
+   "label": "FIXTURE NVDA channel exposure china_export",
+   "value": 0.9953,
+   "unit": "FIXTURE 0-1",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE Channel exposure from filing evidence",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#channel-exposure",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE NVDA/china_export"
+   }
+  },
+  {
+   "id": "E34",
+   "kind": "number",
+   "label": "FIXTURE NVDA FCF shock P05 under joint scenario",
+   "value": -39.38,
+   "unit": "FIXTURE %",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE PORTFOLIO_STRESS_PROGRAM issuer shock",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#portfolio-lens",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE NVDA/p05"
+   }
+  },
+  {
+   "id": "E35",
+   "kind": "number",
+   "label": "FIXTURE AAPL channel exposure china_export",
+   "value": 0.8041,
+   "unit": "FIXTURE 0-1",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE Channel exposure from filing evidence",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#channel-exposure",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE AAPL/china_export"
+   }
+  },
+  {
+   "id": "E36",
+   "kind": "number",
+   "label": "FIXTURE AAPL FCF shock P05 under joint scenario",
+   "value": -17.24,
+   "unit": "FIXTURE %",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE PORTFOLIO_STRESS_PROGRAM issuer shock",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#portfolio-lens",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE AAPL/p05"
+   }
+  },
+  {
+   "id": "E37",
+   "kind": "number",
+   "label": "FIXTURE AMAT channel exposure china_export",
+   "value": 0.9875,
+   "unit": "FIXTURE 0-1",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE Channel exposure from filing evidence",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#channel-exposure",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE AMAT/china_export"
+   }
+  },
+  {
+   "id": "E38",
+   "kind": "number",
+   "label": "FIXTURE AMAT FCF shock P05 under joint scenario",
+   "value": -39.49,
+   "unit": "FIXTURE %",
+   "text": null,
+   "data": null,
+   "provenance": {
+    "source": "model",
+    "title": "FIXTURE PORTFOLIO_STRESS_PROGRAM issuer shock",
+    "url": "FIXTURE https://github.com/cjw0076/geo-alpha-sentinel/blob/main/docs/METHODOLOGY.md#portfolio-lens",
+    "retrieved_at": "FIXTURE 2026-10-31T00:00:00Z",
+    "license": "FIXTURE see docs/DATA_SOURCES.md",
+    "locator": "FIXTURE AMAT/p05"
+   }
+  }
+ ],
+ "failures": [
+  {
+   "ticker": "FIXTURE-NA",
+   "reason": "FIXTURE no 10-K/20-F on EDGAR"
+  }
+ ]
+}

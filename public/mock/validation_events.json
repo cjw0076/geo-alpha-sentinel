@@ -1,0 +1,710 @@
+{
+ "methodology_version": "FIXTURE evt-1.0",
+ "generated_at": "FIXTURE 2026-10-31T09:00:00Z",
+ "declared_at": "FIXTURE 2026-10-31T03:00:00Z",
+ "windows": {
+  "primary": [
+   -1,
+   5
+  ],
+  "secondary": [
+   -1,
+   20
+  ],
+  "estimation": [
+   -260,
+   -30
+  ]
+ },
+ "benchmark": "FIXTURE ACWI",
+ "events": [
+  {
+   "id": "huawei2019",
+   "name_ko": "FIXTURE 화웨이 거래제한 명단 지정",
+   "name_en": "FIXTURE Huawei added to the Entity List",
+   "date": "FIXTURE 2019-05-16",
+   "channel": "china_export",
+   "source_url": "FIXTURE https://example.invalid/source",
+   "n": 189,
+   "ic": -0.21,
+   "ic_t": -2.94,
+   "ic_ci": [
+    -0.36,
+    -0.06
+   ],
+   "q5q1_pp": -1.99,
+   "q5q1_t": -2.35,
+   "ic_secondary": -0.17,
+   "q5q1_secondary_pp": -2.52,
+   "baselines": {
+    "sector": -0.09,
+    "mention": -0.13
+   },
+   "sign_ok": true
+  },
+  {
+   "id": "ukraine2022",
+   "name_ko": "FIXTURE 러시아 우크라이나 침공",
+   "name_en": "FIXTURE Russia invades Ukraine",
+   "date": "FIXTURE 2022-02-24",
+   "channel": "weaponized",
+   "source_url": "FIXTURE https://example.invalid/source",
+   "n": 146,
+   "ic": -0.08,
+   "ic_t": -0.96,
+   "ic_ci": [
+    -0.23,
+    0.07
+   ],
+   "q5q1_pp": -0.76,
+   "q5q1_t": -0.77,
+   "ic_secondary": -0.06,
+   "q5q1_secondary_pp": -0.96,
+   "baselines": {
+    "sector": -0.04,
+    "mention": -0.05
+   },
+   "sign_ok": true
+  },
+  {
+   "id": "pelosi2022",
+   "name_ko": "FIXTURE 펠로시 방문·대만 주변 훈련",
+   "name_en": "FIXTURE Pelosi visit and PLA drills",
+   "date": "FIXTURE 2022-08-02",
+   "channel": "taiwan",
+   "source_url": "FIXTURE https://example.invalid/source",
+   "n": 172,
+   "ic": -0.17,
+   "ic_t": -2.25,
+   "ic_ci": [
+    -0.32,
+    -0.02
+   ],
+   "q5q1_pp": -1.62,
+   "q5q1_t": -1.8,
+   "ic_secondary": -0.14,
+   "q5q1_secondary_pp": -2.04,
+   "baselines": {
+    "sector": -0.08,
+    "mention": -0.1
+   },
+   "sign_ok": true
+  },
+  {
+   "id": "bis2022",
+   "name_ko": "FIXTURE 미 상무부 반도체 수출통제",
+   "name_en": "FIXTURE BIS advanced-computing rules",
+   "date": "FIXTURE 2022-10-07",
+   "channel": "china_export",
+   "source_url": "FIXTURE https://example.invalid/source",
+   "n": 168,
+   "ic": -0.26,
+   "ic_t": -3.47,
+   "ic_ci": [
+    -0.41,
+    -0.11
+   ],
+   "q5q1_pp": -2.47,
+   "q5q1_t": -2.78,
+   "ic_secondary": -0.21,
+   "q5q1_secondary_pp": -3.12,
+   "baselines": {
+    "sector": -0.12,
+    "mention": -0.16
+   },
+   "sign_ok": true
+  },
+  {
+   "id": "gage2023",
+   "name_ko": "FIXTURE 중국 갈륨·게르마늄 수출통제",
+   "name_en": "FIXTURE China gallium/germanium controls",
+   "date": "FIXTURE 2023-07-03",
+   "channel": "china_export",
+   "source_url": "FIXTURE https://example.invalid/source",
+   "n": 175,
+   "ic": -0.12,
+   "ic_t": -1.59,
+   "ic_ci": [
+    -0.27,
+    0.03
+   ],
+   "q5q1_pp": -1.14,
+   "q5q1_t": -1.27,
+   "ic_secondary": -0.1,
+   "q5q1_secondary_pp": -1.44,
+   "baselines": {
+    "sector": -0.05,
+    "mention": -0.07
+   },
+   "sign_ok": true
+  },
+  {
+   "id": "redsea2023",
+   "name_ko": "FIXTURE 홍해 주요 선사 운항 중단",
+   "name_en": "FIXTURE Red Sea carriers pause transits",
+   "date": "FIXTURE 2023-12-18",
+   "channel": "hormuz",
+   "source_url": "FIXTURE https://example.invalid/source",
+   "n": 141,
+   "ic": 0.05,
+   "ic_t": 0.59,
+   "ic_ci": [
+    -0.1,
+    0.2
+   ],
+   "q5q1_pp": 0.48,
+   "q5q1_t": 0.47,
+   "ic_secondary": 0.04,
+   "q5q1_secondary_pp": 0.6,
+   "baselines": {
+    "sector": 0.02,
+    "mention": 0.03
+   },
+   "sign_ok": false
+  },
+  {
+   "id": "hormuz2026",
+   "name_ko": "FIXTURE 호르무즈 통항 급감",
+   "name_en": "FIXTURE Strait of Hormuz transit collapse",
+   "date": "FIXTURE 2026-06-22",
+   "channel": "hormuz",
+   "source_url": "FIXTURE https://example.invalid/source",
+   "n": 188,
+   "ic": -0.19,
+   "ic_t": -2.64,
+   "ic_ci": [
+    -0.34,
+    -0.04
+   ],
+   "q5q1_pp": -1.8,
+   "q5q1_t": -2.11,
+   "ic_secondary": -0.15,
+   "q5q1_secondary_pp": -2.28,
+   "baselines": {
+    "sector": -0.09,
+    "mention": -0.11
+   },
+   "sign_ok": true
+  }
+ ],
+ "summary": {
+  "events_n": 7,
+  "sign_ok_n": 6,
+  "significant_10pct_n": 4,
+  "mean_ic": -0.14,
+  "baseline_sector_mean_ic": -0.06,
+  "baseline_mention_mean_ic": -0.08
+ },
+ "per_issuer": {
+  "TSM": [
+   {
+    "event_id": "huawei2019",
+    "exposure": 0.89,
+    "car_pp": 3.52,
+    "quintile": 1,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "ukraine2022",
+    "exposure": 0.6,
+    "car_pp": -2.79,
+    "quintile": 5,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "pelosi2022",
+    "exposure": 1.0,
+    "car_pp": 4.63,
+    "quintile": 5,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "bis2022",
+    "exposure": 0.89,
+    "car_pp": -1.83,
+    "quintile": 3,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "gage2023",
+    "exposure": 0.89,
+    "car_pp": -2.67,
+    "quintile": 5,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "redsea2023",
+    "exposure": 0.39,
+    "car_pp": 2.3,
+    "quintile": 5,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "hormuz2026",
+    "exposure": 0.39,
+    "car_pp": 4.18,
+    "quintile": 5,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   }
+  ],
+  "NVDA": [
+   {
+    "event_id": "huawei2019",
+    "exposure": 1.0,
+    "car_pp": 3.27,
+    "quintile": 3,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "ukraine2022",
+    "exposure": 0.6,
+    "car_pp": 3.92,
+    "quintile": 2,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "pelosi2022",
+    "exposure": 0.68,
+    "car_pp": 2.76,
+    "quintile": 2,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "bis2022",
+    "exposure": 1.0,
+    "car_pp": -3.17,
+    "quintile": 4,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "gage2023",
+    "exposure": 1.0,
+    "car_pp": -2.81,
+    "quintile": 1,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "redsea2023",
+    "exposure": 0.58,
+    "car_pp": 0.4,
+    "quintile": 4,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "hormuz2026",
+    "exposure": 0.58,
+    "car_pp": -7.98,
+    "quintile": 3,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   }
+  ],
+  "AAPL": [
+   {
+    "event_id": "huawei2019",
+    "exposure": 0.8,
+    "car_pp": 1.98,
+    "quintile": 2,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "ukraine2022",
+    "exposure": 0.6,
+    "car_pp": 4.15,
+    "quintile": 3,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "pelosi2022",
+    "exposure": 0.31,
+    "car_pp": -7.0,
+    "quintile": 2,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "bis2022",
+    "exposure": 0.8,
+    "car_pp": 4.55,
+    "quintile": 2,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "gage2023",
+    "exposure": 0.8,
+    "car_pp": 1.45,
+    "quintile": 1,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "redsea2023",
+    "exposure": 0.06,
+    "car_pp": -3.42,
+    "quintile": 4,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "hormuz2026",
+    "exposure": 0.06,
+    "car_pp": -6.72,
+    "quintile": 2,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   }
+  ],
+  "AMAT": [
+   {
+    "event_id": "huawei2019",
+    "exposure": 0.99,
+    "car_pp": -6.74,
+    "quintile": 4,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "ukraine2022",
+    "exposure": 0.6,
+    "car_pp": 4.92,
+    "quintile": 4,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "pelosi2022",
+    "exposure": 0.63,
+    "car_pp": -4.25,
+    "quintile": 2,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "bis2022",
+    "exposure": 0.99,
+    "car_pp": -4.01,
+    "quintile": 1,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "gage2023",
+    "exposure": 0.99,
+    "car_pp": 1.11,
+    "quintile": 1,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "redsea2023",
+    "exposure": 0.43,
+    "car_pp": -4.27,
+    "quintile": 4,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "hormuz2026",
+    "exposure": 0.43,
+    "car_pp": -2.83,
+    "quintile": 1,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   }
+  ],
+  "CVX": [
+   {
+    "event_id": "huawei2019",
+    "exposure": 0.11,
+    "car_pp": -3.62,
+    "quintile": 5,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "ukraine2022",
+    "exposure": 0.6,
+    "car_pp": -0.27,
+    "quintile": 5,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "pelosi2022",
+    "exposure": 0.0,
+    "car_pp": 4.45,
+    "quintile": 1,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "bis2022",
+    "exposure": 0.11,
+    "car_pp": 4.79,
+    "quintile": 2,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "gage2023",
+    "exposure": 0.11,
+    "car_pp": 4.6,
+    "quintile": 1,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "redsea2023",
+    "exposure": 0.46,
+    "car_pp": -7.82,
+    "quintile": 3,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "hormuz2026",
+    "exposure": 0.46,
+    "car_pp": -8.45,
+    "quintile": 2,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   }
+  ],
+  "ASML": [
+   {
+    "event_id": "huawei2019",
+    "exposure": 0.91,
+    "car_pp": -5.21,
+    "quintile": 2,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "ukraine2022",
+    "exposure": 0.6,
+    "car_pp": 2.48,
+    "quintile": 3,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "pelosi2022",
+    "exposure": 0.8,
+    "car_pp": -3.32,
+    "quintile": 5,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "bis2022",
+    "exposure": 0.91,
+    "car_pp": 3.87,
+    "quintile": 5,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "gage2023",
+    "exposure": 0.91,
+    "car_pp": -2.08,
+    "quintile": 3,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "redsea2023",
+    "exposure": 0.0,
+    "car_pp": -7.75,
+    "quintile": 1,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "hormuz2026",
+    "exposure": 0.0,
+    "car_pp": 2.19,
+    "quintile": 2,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   }
+  ],
+  "MU": [
+   {
+    "event_id": "huawei2019",
+    "exposure": 0.98,
+    "car_pp": -3.05,
+    "quintile": 1,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "ukraine2022",
+    "exposure": 0.6,
+    "car_pp": -5.24,
+    "quintile": 1,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "pelosi2022",
+    "exposure": 0.53,
+    "car_pp": -0.12,
+    "quintile": 3,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "bis2022",
+    "exposure": 0.98,
+    "car_pp": -7.83,
+    "quintile": 2,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "gage2023",
+    "exposure": 0.98,
+    "car_pp": -8.07,
+    "quintile": 1,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "redsea2023",
+    "exposure": 0.27,
+    "car_pp": -2.65,
+    "quintile": 3,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "hormuz2026",
+    "exposure": 0.27,
+    "car_pp": 4.92,
+    "quintile": 4,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   }
+  ],
+  "QCOM": [
+   {
+    "event_id": "huawei2019",
+    "exposure": 0.99,
+    "car_pp": 3.97,
+    "quintile": 3,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "ukraine2022",
+    "exposure": 0.6,
+    "car_pp": -0.3,
+    "quintile": 1,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "pelosi2022",
+    "exposure": 0.63,
+    "car_pp": -1.62,
+    "quintile": 2,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "bis2022",
+    "exposure": 0.99,
+    "car_pp": 4.13,
+    "quintile": 2,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "gage2023",
+    "exposure": 0.99,
+    "car_pp": -5.33,
+    "quintile": 2,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "redsea2023",
+    "exposure": 0.0,
+    "car_pp": -6.18,
+    "quintile": 3,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "hormuz2026",
+    "exposure": 0.0,
+    "car_pp": -0.2,
+    "quintile": 5,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   }
+  ],
+  "TSLA": [
+   {
+    "event_id": "huawei2019",
+    "exposure": 0.91,
+    "car_pp": 1.63,
+    "quintile": 3,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "ukraine2022",
+    "exposure": 0.6,
+    "car_pp": -2.76,
+    "quintile": 2,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "pelosi2022",
+    "exposure": 0.0,
+    "car_pp": -5.21,
+    "quintile": 1,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "bis2022",
+    "exposure": 0.91,
+    "car_pp": 4.92,
+    "quintile": 1,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "gage2023",
+    "exposure": 0.91,
+    "car_pp": -8.79,
+    "quintile": 5,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "redsea2023",
+    "exposure": 0.39,
+    "car_pp": -1.29,
+    "quintile": 2,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "hormuz2026",
+    "exposure": 0.39,
+    "car_pp": -1.8,
+    "quintile": 2,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   }
+  ],
+  "INTC": [
+   {
+    "event_id": "huawei2019",
+    "exposure": 0.95,
+    "car_pp": 4.08,
+    "quintile": 1,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "ukraine2022",
+    "exposure": 0.6,
+    "car_pp": 0.22,
+    "quintile": 4,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "pelosi2022",
+    "exposure": 0.58,
+    "car_pp": 0.19,
+    "quintile": 5,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "bis2022",
+    "exposure": 0.95,
+    "car_pp": 2.68,
+    "quintile": 4,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "gage2023",
+    "exposure": 0.95,
+    "car_pp": 4.58,
+    "quintile": 3,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "redsea2023",
+    "exposure": 0.5,
+    "car_pp": 0.63,
+    "quintile": 2,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   },
+   {
+    "event_id": "hormuz2026",
+    "exposure": 0.5,
+    "car_pp": -4.2,
+    "quintile": 2,
+    "filing": "FIXTURE 10-K 2022-03-18"
+   }
+  ]
+ }
+}
